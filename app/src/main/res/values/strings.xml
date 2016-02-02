@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">SURVEY</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string-array name="jk_array">
+        <item>Pria</item>
+        <item>Wanita</item>
+        <item>Dipertanyakan</item>
+    </string-array>
+
+
+</resources>
