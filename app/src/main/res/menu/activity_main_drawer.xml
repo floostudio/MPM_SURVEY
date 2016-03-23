@@ -4,23 +4,41 @@
     <group android:checkableBehavior="single">
         <item
             android:checked="true"
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Home" />
+            android:id="@+id/nav_Survey"
+            android:icon="@drawable/ic_action_survey"
+            android:title="Survey" />
+
+        <!--
         <item
             android:id="@+id/nav_gallery"
             android:icon="@drawable/ic_menu_gallery"
             android:title="User" />
+            -->
+
         <item
-            android:id="@+id/nav_bantuan"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Bantuan" />
+            android:id="@+id/nav_Sigout"
+            android:icon="@drawable/ic_menu_send"
+            android:title="Sign Out" />
 
     </group>
 
-    <item
-        android:id="@+id/nav_send"
-        android:icon="@drawable/ic_menu_send"
-        android:title="Sign Out" />
+    <!--
+
+    <item android:title="bantun">
+        <menu>
+            <item
+                android:id="@+id/nav_1"
+                android:title="1" />
+            <item
+                android:id="@+id/nav_2"
+                android:title="2" />
+            <item
+                android:id="@+id/nav_3"
+                android:title="3" />
+        </menu>
+    </item>
+    -->
+
+
 
 </menu>

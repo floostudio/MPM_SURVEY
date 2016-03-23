@@ -1,6 +1,7 @@
 package com.floo.mpm_survey;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -12,16 +13,17 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 
-import com.floo.bantuan.Bantu;
 import com.floo.fragment.Fragment_Home;
 
-public class MainActivity extends AppCompatActivity {
+
+public class MainActivity extends AppCompatActivity /*implements AsyncResponse */{
     DrawerLayout drawer;
     Toolbar toolbar;
     ActionBar actionBar;
-
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +46,13 @@ public class MainActivity extends AppCompatActivity {
 
         //Fragment pertama
         setFragment(0);
-
     }
-
-
+    /*
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main,menu);
+        return true;
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -55,7 +60,13 @@ public class MainActivity extends AppCompatActivity {
            case android.R.id.home:
                drawer.openDrawer(GravityCompat.START);
                return true;
+           /*case R.id.action_sync:
+               DataFetcherTask task = new DataFetcherTask(this);
+               task.delegate = this;
+               progressDialog = ProgressDialog.show(this, "Mohon Tunggu",
+                       "Inisialisasi Data.....", true);
 
+               return true;*/
        }
         return super.onOptionsItemSelected(item);
     }
@@ -66,48 +77,18 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem item) {
                         switch (item.getItemId()){
-                            case R.id.nav_camera:
+                            case R.id.nav_Survey:
                                 item.setChecked(true);
                                 setFragment(0);
                                 drawer.closeDrawer(GravityCompat.START);
                                 return true;
-                            case R.id.nav_gallery:
-                                Intent re=new Intent(MainActivity.this, UserActivity.class);
-
-                                startActivity(re);
-                                return true;
-                            case R.id.nav_bantuan:
-                                Intent bantu=new Intent(MainActivity.this, Bantu.class);
-
-                                startActivity(bantu);
-                                return true;
-
-
-                            case R.id.nav_send:
+                            case R.id.nav_Sigout:
                                 Intent res=new Intent(MainActivity.this, LoginActivity.class);
                                 finish();
                                 startActivity(res);
                                 return true;
-                           /* case R.id.nav_slideshow:
-                                item.setChecked(true);
-                                setFragment(2);
-                                drawer.closeDrawer(GravityCompat.START);
-                                return true;
-                            case R.id.nav_manage:
-                                item.setChecked(true);
-                                drawer.closeDrawer(GravityCompat.START);
-                                return true;
-                            case R.id.nav_share:
-                                item.setChecked(true);
-                                drawer.closeDrawer(GravityCompat.START);
-                                return true;
-                            case R.id.nav_send:
-                                item.setChecked(true);
-                                drawer.closeDrawer(GravityCompat.START);
-                                return true;*/
                         }
                         return true;
-
                     }
                 }
         );
@@ -124,13 +105,15 @@ public class MainActivity extends AppCompatActivity {
                 ft.replace(R.id.content_fragment, homee);
                 ft.commit();
                 break;
-
-
         }
     }
+/*
+    @Override
+    public void processFinish(String output) {
 
+    }
+*/
    /* public void onBackPressed(){
-
             new AlertDialog.Builder(this)
                     .setTitle("Really Exit?")
                     .setMessage("Are you sure you want to exit?")

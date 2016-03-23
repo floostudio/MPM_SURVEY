@@ -1,79 +1,126 @@
 package com.floo.fragment;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.floo.database.DBHandler;
+
+import com.floo.mpm_survey.AsyncResponse;
+import com.floo.mpm_survey.Data;
+import com.floo.mpm_survey.DataFetcherTask;
 import com.floo.mpm_survey.MainActivity;
+import com.floo.mpm_survey.NetworkUtils;
 import com.floo.mpm_survey.R;
 import com.floo.mpm_survey.RespondenceActivity;
+import com.floo.mpm_survey.Survey;
+import com.floo.mpm_survey.Survey_Adapter;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
-public class Fragment_Home extends Fragment {
-    HashMap<String, String>map;
-    ArrayList<HashMap<String, String>> mylist;
-    String[] atas, tengah, bawah;
-    ListView isi;
-    SimpleAdapter Adapter;
+public class Fragment_Home extends Fragment implements AsyncResponse {
+    ListView listSurvey;
+    Survey_Adapter adapter;
+    DBHandler handler;
+    DataFetcherTask dataFetcherTask;
 
+    Context context;
+    ProgressDialog progressDialog;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_home, container, false);
+        context = getActivity().getApplicationContext();
 
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Home");
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle("Survey");
 
-        isi = (ListView) v.findViewById(R.id.list_isi);
+        listSurvey = (ListView) v.findViewById(R.id.list_isi);
+        dataFetcherTask = new DataFetcherTask(context);
+        dataFetcherTask.delegate = this;
 
-        atas = new String[]{"SAMPLE SURVEY 1", "SAMPLE SURVEY 2", "SAMPLE SURVEY 3",
-                "SAMPLE SURVEY 4", "SAMPLE SURVEY 5", "SAMPLE SURVEY 6",
-                "SAMPLE SURVEY 7", "IT'S A VERY VERY LONG LONG SAMPLE NAME QUIZ 8",
-                "SAMPLE SURVEY 9", "SAMPLE SURVEY 10", "SAMPLE SURVEY 11"};
-
-        tengah = new String[]{"Total Question : 30", "Total Question : 30", "Total Question : 30",
-                "Total Question : 30", "Total Question : 30", "Total Question : 30",
-                "Total Question : 30", "Total Question : 30",
-                "Total Question : 30", "Total Question : 30", "Total Question : 30"};
-
-        bawah = new String[]{"22/7/2015 | by admin", "22/7/2015 | by admin", "22/7/2015 | by admin",
-                "22/7/2015 | by admin", "22/7/2015 | by admin", "22/7/2015 | by admin",
-                "22/7/2015 | by admin", "22/7/2015 | by admin",
-                "22/7/2015 | by admin", "22/7/2015 | by admin", "22/7/2015 | by admin"};
-
-        mylist = new ArrayList<HashMap<String, String>>();
-        for (int i=0; i < atas.length; i++){
-            map = new HashMap<String, String>();
-            map.put("Atasss", atas[i]);
-            map.put("Tengahhh", tengah[i]);
-            map.put("Bawahhh", bawah[i]);
-
-            mylist.add(map);
-        }
-
-        Adapter = new SimpleAdapter((MainActivity)getActivity(), mylist, R.layout.list_home,
-                new String[]{"Atasss","Tengahhh","Bawahhh"}, new int[]{R.id.txt_atas, R.id.txt_tengah, R.id.txt_bawah});
-        isi.setAdapter(Adapter);
-
-        isi.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listSurvey.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent res=new Intent((MainActivity)getActivity(), RespondenceActivity.class);
-                startActivity(res);
+                Intent ab=new Intent(context, RespondenceActivity.class);
+                String idSurvey = ((TextView) view.findViewById(R.id.txt_IDPARSING)).getText().toString();
+                ab.putExtra("SURVEY_ID", idSurvey);
+                startActivity(ab);
+
+
             }
         });
 
+        handler = new DBHandler(context);
+        NetworkUtils utils = new NetworkUtils(context);
+        if(handler.getSurveyCount() == 0 && utils.isConnectingToInternet())
+        {
+            dataFetcherTask.execute();
+            progressDialog = ProgressDialog.show(getActivity(), "Mohon Tunggu",
+                    "Inisialisasi Data.....", true);
+        }
+        else
+        {
+            /*
+            ArrayList<Survey> surveyList = handler.getAllSurvey();
 
-                return v;
+            adapter = new Survey_Adapter(context,surveyList);
+            listSurvey.setAdapter(adapter);
+            */
+            setListSurvey();
+        }
+        return v;
+    }
+
+    @Override
+    public void processFinish(String output) {
+
+        if(output!=null){
+            /*
+            ArrayList<Survey> surveyList = handler.getAllSurvey();
+            adapter = new Survey_Adapter(context,surveyList);
+            listSurvey.setAdapter(adapter);
+            */
+            setListSurvey();
+        }
+        else{
+            Toast.makeText(context,"Ooopppss terjadi kesalahan",Toast.LENGTH_LONG).show();
+        }
+        progressDialog.dismiss();
+    }
+
+    private void setListSurvey(){
+        ArrayList<Survey> surveyList = handler.getAllSurvey();
+        for(Survey survey:surveyList){
+            survey.setUploadedCount(handler.getUploadedRespondenCount(survey.getSurvey_id()));
+            survey.setTotalRespondenCount(handler.getRespondenCount(survey.getSurvey_id()));
+        }
+        adapter = new Survey_Adapter(context,surveyList);
+        listSurvey.setAdapter(adapter);
+
     }
 }

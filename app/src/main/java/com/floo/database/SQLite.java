@@ -82,9 +82,6 @@ public class SQLite {
 
             db.execSQL("DROP TABLE IF EXISTS "+NAMA_DB);
             onCreate(db);
-
-
-
         }
     }
 

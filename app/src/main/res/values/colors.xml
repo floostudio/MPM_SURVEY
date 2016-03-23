@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+
+    <color name="primary">#3F51B5</color>
+    <color name="primary_dark">#303F9F</color>
+    <color name="primary_light">#C5CAE9</color>
+    <color name="accent">#FF9800</color>
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#727272</color>
+    <color name="icons">#FFFFFF</color>
+
+    <color name="row_color">#e2e2e2</color>
+
 
     <!--Login-->
     <color name="material_blue_400">#569fd7</color>
 
-    <!--Survey Detail-->
+    <!--Coba Detail-->
     <color name="material_black">#000000</color>
 
 </resources>

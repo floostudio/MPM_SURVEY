@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/textViewNama"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text=""
+        android:textSize="18sp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"/>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:descendantFocusability="afterDescendants"
+        android:layout_height="0dp"
+        android:id="@+id/list_pertanyaan"
+        android:layout_weight="5"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#df4040"
+            android:layout_margin="1dp"
+            android:text="CANCEL"
+            android:textColor="#fff"
+            android:textStyle="bold"
+            android:id="@+id/btn_Cancel"
+            android:gravity="center"/>
+
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:textColor="#fff"
+            android:background="#16e714"
+            android:layout_margin="1dp"
+            android:text="SAVE"
+            android:textStyle="bold"
+            android:id="@+id/btn_Save"
+            android:gravity="center"/>
+    </LinearLayout>
+
+
+</LinearLayout>

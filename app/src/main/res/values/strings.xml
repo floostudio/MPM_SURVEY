@@ -12,5 +12,10 @@
         <item>Dipertanyakan</item>
     </string-array>
 
+    <string name="GPSAlertDialogTitle">GPS is setting</string>
+    <string name="GPSAlertDialogMessage">GPS is not enabled. Do you want to go to setting menu</string>
+    <string name="cancel">Cancel</string>
+    <string name="title_activity_splash">SplashActivity</string>
+
 
 </resources>

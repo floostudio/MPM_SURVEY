@@ -14,6 +14,7 @@ import android.widget.PopupWindow.OnDismissListener;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.floo.mpm_survey.R;
 
@@ -48,6 +49,10 @@ public class QuickAction extends PopupWindows implements OnDismissListener {
     private int mAnimStyle;
     private int mOrientation;
     private int rootWidth=0;
+	public String RESPONDEN_ID;
+	public String RESPON_STATUS;
+	public ImageView RESPON_IMG;
+
     
     public static final int HORIZONTAL = 0;
     public static final int VERTICAL = 1;
@@ -140,6 +145,26 @@ public class QuickAction extends PopupWindows implements OnDismissListener {
 	public void setOnActionItemClickListener(OnActionItemClickListener listener) {
 		mItemClickListener = listener;
 	}
+
+	public void refreshActionItem(ActionItem action) {
+		String title 	= action.getTitle();
+
+		View container;
+		if (mOrientation == HORIZONTAL) {
+			container = mInflater.inflate(R.layout.action_item_horizontal, null);
+		} else {
+			container = mInflater.inflate(R.layout.action_item_vertical, null);
+		}
+		TextView text 	= (TextView) container.findViewById(R.id.tv_title);
+
+		if (title != null) {
+			text.setText(title);
+		} else {
+			text.setVisibility(View.GONE);
+		}
+
+		mTrack.addView(container);
+	}
 	
 	/**
 	 * Add action item
@@ -162,7 +187,7 @@ public class QuickAction extends PopupWindows implements OnDismissListener {
 		
 		ImageView img 	= (ImageView) container.findViewById(R.id.iv_icon);
 		TextView text 	= (TextView) container.findViewById(R.id.tv_title);
-		
+
 		if (icon != null) {
 			img.setImageDrawable(icon);
 		} else {
