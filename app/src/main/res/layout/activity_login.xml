@@ -5,22 +5,38 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:background="@color/primary"
-    android:padding="30dp">
+    android:paddingTop="30dp"
+    android:paddingLeft="30dp"
+    android:paddingRight="30dp">
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="0dp"
         android:gravity="center"
         android:orientation="vertical">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MPM Online Survey Tools"
+            android:textColor="#fff"
+            android:textSize="20dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="(MOST)"
+            android:textColor="#fff"
+            android:textSize="20dp"
+            android:layout_marginBottom="5dp"/>
+
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginBottom="20dp"
+            android:layout_height="170dp"
+            android:layout_marginBottom="15dp"
             android:adjustViewBounds="true"
-            android:src="@drawable/honda_logo"/>
+            android:src="@drawable/logohondavertikal"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -96,10 +112,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:layout_marginTop="15dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:text="LOGIN"
         android:textColor="#ffffff"
         android:textStyle="bold"
         android:id="@+id/btn_Login"
         android:background="@color/accent" />
+
+
+        <ImageView
+            android:gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/logodistributor1"/>
+
 </LinearLayout>
