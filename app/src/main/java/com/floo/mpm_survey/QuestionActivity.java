@@ -145,6 +145,7 @@ public class QuestionActivity extends AppCompatActivity {
                 adapter = new QuestionListAdapter(this, questionList, isEditing, new JSONArray());
             }
             listPertanyaan.setAdapter(adapter);
+            listPertanyaan.smoothScrollToPosition(0);
         }
 
         btnSave.setOnClickListener(new View.OnClickListener() {
