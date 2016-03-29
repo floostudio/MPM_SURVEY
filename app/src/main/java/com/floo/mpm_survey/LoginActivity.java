@@ -17,8 +17,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.floo.database.SQLite;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
