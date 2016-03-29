@@ -10,4 +10,5 @@
     android:layout_marginTop="5dp"
     android:background="@drawable/activity_survey_detail"
     android:inputType="numberDecimal"
-    android:hint="Masukkan angka.."/>
+    android:hint="Masukkan angka..">
+    </EditText>

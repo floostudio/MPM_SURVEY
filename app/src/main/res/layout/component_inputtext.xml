@@ -8,4 +8,5 @@
     android:layout_marginRight="35dp"
     android:layout_marginTop="5dp"
     android:background="@drawable/activity_survey_detail"
-    android:hint="Masukkan text.."/>
+    android:hint="Masukkan text..">
+</EditText>

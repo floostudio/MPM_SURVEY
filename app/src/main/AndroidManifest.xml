@@ -43,7 +43,7 @@
             android:label="Survey Detail"
             android:parentActivityName=".RespondenceActivity"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize">
+            android:windowSoftInputMode="adjustPan">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".RespondenceActivity" />

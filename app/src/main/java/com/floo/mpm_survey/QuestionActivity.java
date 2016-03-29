@@ -78,7 +78,7 @@ public class QuestionActivity extends AppCompatActivity {
         unAnsweredQuestionID = new ArrayList<>();
         answeredQuestion = new ArrayList<>();
 
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         if(!isEditing) {
             showInputUser();

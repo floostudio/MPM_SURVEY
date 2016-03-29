@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
@@ -33,17 +34,19 @@ import java.util.List;
  * Created by SONY_VAIO on 15-Mar-16.
  * Submit all survey result to server
  */
-//// TODO: get image file (test) and add summary post result
 public class SubmitSurvey extends AsyncTask<String, Void, String> {
     List<JSONObject> listSavedAnswers;
     Context context;
     ProgressDialog progressDialog;
     String activeSurveyorUsername="";
+    String activeSurveyorName="";
+
     public SubmitSurvey(Context context){
         this.context = context;
         listSavedAnswers= new ArrayList<>();
         LocalLoginData localLoginData = new LocalLoginData(context);
         activeSurveyorUsername = localLoginData.getPreference(LocalLoginData.keyActiveSurveyorUsername);
+        activeSurveyorName = localLoginData.getPreference(LocalLoginData.keyActiveSurveyorNama);
     }
     public void addDataToUpload(JSONObject savedAnswer){
         if(listSavedAnswers.size()==0)
@@ -87,7 +90,14 @@ public class SubmitSurvey extends AsyncTask<String, Void, String> {
                 dataRowToPost.put("id_surveyor", activeSurveyorUsername);
                 dataRowToPost.put("id_survey", savedAnswer.getString("SURVEY_ID"));
                 dataRowToPost.put("id_responden_temp", savedAnswer.getString("RESPONDENCE_ID"));
-                dataRowToPost.put("nama_responden", savedAnswer.getString("RESPONDENCE_NAME"));
+                //change nama_responden content to surveyor name
+                //dataRowToPost.put("nama_responden", savedAnswer.getString("RESPONDENCE_NAME"));
+                //// TODO: 30-Mar-16 check which one is correct
+                dataRowToPost.put("nama_responden", activeSurveyorName);
+                //or
+                //dataRowToPost.put("nama_surveyor", activeSurveyorName);
+
+
 
 
                 JSONArray answer = savedAnswer.getJSONArray("ANSWER");
@@ -119,7 +129,8 @@ public class SubmitSurvey extends AsyncTask<String, Void, String> {
                         rowJawaban.put("id_master_option", "");
                         rowJawaban.put("answer_text", "");
                         String imagePath = rowAnswer.getJSONArray("OPTION").getJSONObject(0).getString("TEXT");
-                        File imgFile = new File(imagePath);
+                        Uri uri = Uri.parse(imagePath);
+                        File imgFile = new File(uri.getPath());
                         if (imgFile.exists()) {
                             Bitmap bitmap = null;
                             BitmapFactory.Options options = new BitmapFactory.Options();
@@ -186,6 +197,7 @@ public class SubmitSurvey extends AsyncTask<String, Void, String> {
                 for(int i=0;i<respondError.length();i++){
                     handler.setUploadedResponden(respondError.getJSONObject(i).getString("ID_RESPONDEN_TEMP"));
                 }
+                Toast.makeText(context,"Upload Berhasil",Toast.LENGTH_LONG).show();
                 RespondenceActivity.ra.RefreshList();
             }
             else if(resultData.getString("Status").equalsIgnoreCase("gagal")){

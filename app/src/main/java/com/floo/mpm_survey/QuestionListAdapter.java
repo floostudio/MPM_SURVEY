@@ -423,17 +423,25 @@ public class QuestionListAdapter extends BaseAdapter {
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != Activity.RESULT_CANCELED) {
+            Log.e("activity result",requestCode+"");
             if (requestCode == QuestionActivity.CHOOSE_IMAGE_CODE) {
                 final boolean isCamera;
                 if (data == null) {
                     isCamera = true;
                 } else {
                     final String action = data.getAction();
+                    if(action!=null)
+                        Log.e("cameran intent",action);
+                    else
+                        Log.e("cameran intent","null");
+
                     isCamera = action != null && action.equals(MediaStore.ACTION_IMAGE_CAPTURE);
                 }
                 Uri selectedImageUri;
                 String filePath;
                 if (isCamera) {
+                    if(data!=null)
+                        Log.e("data intent",data.getDataString());
                     selectedImageUri = outputFileUri;
                     filePath=selectedImageUri.toString();
                 } else {
@@ -442,7 +450,6 @@ public class QuestionListAdapter extends BaseAdapter {
                     Cursor cursor = context.getContentResolver().query(selectedImageUri,filePathColumn,null,null,null);
                     if(cursor!=null) {
                         cursor.moveToFirst();
-
                         int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                         filePath = cursor.getString(columnIndex);
                         cursor.close();
@@ -467,15 +474,32 @@ public class QuestionListAdapter extends BaseAdapter {
     }
 
     private void setImageViewFromPath(String fullpath,ImageView imageView){
-        File imgFile = new  File(fullpath);
+        Uri uri = Uri.parse(fullpath);
+        File imgFile = new  File(uri.getPath());
+
         if(imgFile.exists()){
-            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            Log.e("image file","exist");
+            Bitmap bitmap = null;
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            for (options.inSampleSize = 1; options.inSampleSize <= 32; options.inSampleSize++) {
+                try {
+                    bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), options);
+                    Log.e("image handle", "Decoded successfully for sampleSize " + options.inSampleSize);
+                    break;
+                } catch (OutOfMemoryError outOfMemoryError) {
+                    // If an OutOfMemoryError occurred, we continue with for loop and next inSampleSize value
+                    Log.e("image handle", "outOfMemoryError while reading file for sampleSize " + options.inSampleSize
+                            + " retrying with higher value");
+                }
+            }
+            //Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
             imageView.setVisibility(View.VISIBLE);
-            imageView.setImageBitmap(myBitmap);
+            imageView.setImageBitmap(bitmap);
 
         }
         else{
             imageView.setVisibility(View.GONE);
+            Log.e("image file", "not exist");
         }
 
     }
