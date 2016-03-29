@@ -3,7 +3,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#fff">
+    android:background="#fff"
+    android:showDividers="none">
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,14 +17,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#000"
-            android:textStyle="bold"
             android:textSize="15dp"
             android:text="x"/>
 
         <TextView
             android:id="@+id/textPertanyaan"
             android:layout_marginLeft="7dp"
-            android:textStyle="bold"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#000"

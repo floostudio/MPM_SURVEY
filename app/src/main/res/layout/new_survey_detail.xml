@@ -21,7 +21,6 @@
 
     <ListView
         android:layout_width="match_parent"
-        android:descendantFocusability="afterDescendants"
         android:layout_height="0dp"
         android:id="@+id/list_pertanyaan"
         android:layout_weight="5"/>

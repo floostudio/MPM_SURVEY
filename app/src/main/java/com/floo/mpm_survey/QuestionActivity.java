@@ -463,7 +463,7 @@ public class QuestionActivity extends AppCompatActivity {
             public void onClick(View v)
             {
                 if(inputUser.getText().toString().equals("")){
-                    Toast.makeText(getBaseContext(), "Isi dulu", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(), "Masukkan nama responden", Toast.LENGTH_LONG).show();
                 }else{
                     respondenceName = inputUser.getText().toString();
                     txtName.setText("Survey Responden\n"+respondenceName);
