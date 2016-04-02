@@ -49,6 +49,17 @@
                 android:value=".RespondenceActivity" />
         </activity>
         <activity
+            android:name=".SurveyQuestionActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="Survey Detail"
+            android:parentActivityName=".RespondenceActivity"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".RespondenceActivity" />
+        </activity>
+        <activity
             android:name=".SplashActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">

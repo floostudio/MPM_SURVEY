@@ -18,6 +18,10 @@ public class Survey_Adapter extends BaseAdapter {
     Context context;
     ArrayList<Survey> listData;
 
+    public ArrayList<Survey> getListData() {
+        return listData;
+    }
+
     public Survey_Adapter(Context context, ArrayList<Survey> listData){
         this.context = context;
         this.listData = listData;

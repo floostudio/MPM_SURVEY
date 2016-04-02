@@ -107,7 +107,8 @@ public class MainActivity extends AppCompatActivity /*implements AsyncResponse *
                 break;
         }
     }
-/*
+
+    /*
     @Override
     public void processFinish(String output) {
 

@@ -51,6 +51,7 @@ public class Fragment_Home extends Fragment implements AsyncResponse {
     Context context;
     ProgressDialog progressDialog;
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -122,5 +123,16 @@ public class Fragment_Home extends Fragment implements AsyncResponse {
         adapter = new Survey_Adapter(context,surveyList);
         listSurvey.setAdapter(adapter);
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ArrayList<Survey> surveyList = adapter.getListData();
+        for(Survey survey:surveyList){
+            survey.setUploadedCount(handler.getUploadedRespondenCount(survey.getSurvey_id()));
+            survey.setTotalRespondenCount(handler.getRespondenCount(survey.getSurvey_id()));
+        }
+        adapter.notifyDataSetChanged();
     }
 }

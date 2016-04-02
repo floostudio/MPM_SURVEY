@@ -80,9 +80,13 @@ public class RespondenceActivity extends AppCompatActivity{
         btnNew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent aa=new Intent(RespondenceActivity.this, QuestionActivity.class);
+                /*Intent aa=new Intent(RespondenceActivity.this, QuestionActivity.class);
+                aa.putExtra("SURVEY_ID", idSurvey);
+                startActivity(aa);*/
+                Intent aa=new Intent(RespondenceActivity.this, SurveyQuestionActivity.class);
                 aa.putExtra("SURVEY_ID", idSurvey);
                 startActivity(aa);
+
             }
         });
 
