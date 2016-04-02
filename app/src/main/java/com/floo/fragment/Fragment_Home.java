@@ -78,7 +78,7 @@ public class Fragment_Home extends Fragment implements AsyncResponse {
 
         handler = new DBHandler(context);
         NetworkUtils utils = new NetworkUtils(context);
-        if(handler.getSurveyCount() == 0 && utils.isConnectingToInternet())
+        if(utils.isConnectingToInternet())
         {
             dataFetcherTask.execute();
             progressDialog = ProgressDialog.show(getActivity(), "Mohon Tunggu",
@@ -128,11 +128,13 @@ public class Fragment_Home extends Fragment implements AsyncResponse {
     @Override
     public void onResume() {
         super.onResume();
-        ArrayList<Survey> surveyList = adapter.getListData();
-        for(Survey survey:surveyList){
-            survey.setUploadedCount(handler.getUploadedRespondenCount(survey.getSurvey_id()));
-            survey.setTotalRespondenCount(handler.getRespondenCount(survey.getSurvey_id()));
+        if(adapter!=null){
+            ArrayList<Survey> surveyList = adapter.getListData();
+            for(Survey survey:surveyList){
+                survey.setUploadedCount(handler.getUploadedRespondenCount(survey.getSurvey_id()));
+                survey.setTotalRespondenCount(handler.getRespondenCount(survey.getSurvey_id()));
+            }
+            adapter.notifyDataSetChanged();
         }
-        adapter.notifyDataSetChanged();
     }
 }
