@@ -37,6 +37,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -653,8 +654,9 @@ public class SurveyQuestionActivity extends AppCompatActivity {
 
             }
             listPertanyaan.addView(row);
-
         }
+        ScrollView scrollView = (ScrollView)findViewById(R.id.scrollView);
+        scrollView.smoothScrollTo(0,0);
 
     }
 
