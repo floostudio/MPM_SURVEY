@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -118,6 +119,10 @@ public class QuestionActivity extends AppCompatActivity {
         questionList = handler.getAllQuestion(idSurvey);
         for(Question question:questionList){
             question.setOPTIONS(handler.getOptionsByPertanyaanID(question.getPertanyaan_id()));
+            /*Log.e("q","question "+question.getPertanyaan_id() + " "+question.getPertanyaan());
+            for(Option opt:question.getOPTIONS()){
+                Log.e("opt","option "+opt.getOPTION_ID()+ " "+opt.getTEXT()+" "+opt.getPERTANYAAN_ID());
+            }*/
         }
         if (savedInstanceState != null
                 && savedInstanceState.containsKey(LIST_INSTANCE_STATE)) {
@@ -147,6 +152,16 @@ public class QuestionActivity extends AppCompatActivity {
             listPertanyaan.setAdapter(adapter);
             listPertanyaan.smoothScrollToPosition(0);
         }
+        /*listPertanyaan.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Question item = (Question)listPertanyaan.getItemAtPosition(i);
+                Log.e("q","question "+item.getPertanyaan_id() + " "+item.getPertanyaan());
+                for(Option opt:item.getOPTIONS()){
+                    Log.e("opt","option "+opt.getOPTION_ID()+ " "+opt.getTEXT()+" "+opt.getPERTANYAAN_ID());
+                }
+            }
+        });*/
 
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override

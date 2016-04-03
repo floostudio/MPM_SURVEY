@@ -141,7 +141,7 @@ public class DataFetcherTask extends AsyncTask<Void,Void,String> {
                     //Log.e("options",options.toString());
                     for(int j =0;j<options.length();j++){
                         JSONObject optionObj = options.getJSONObject(j);
-                        if(!optionObj.getString("OPTION_ID").equals("")) {
+                        if(!optionObj.getString("OPTION_ID").trim().equals("")) {
                             //Log.e("obj",optionObj.toString());
                             Option option = new Option();
                             option.setOPTION_ID(optionObj.getString("OPTION_ID"));

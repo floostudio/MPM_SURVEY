@@ -60,6 +60,8 @@ public class QuestionListAdapter extends BaseAdapter {
     static Button lastClickedUploadButton;
     static TextView lastTextNeedChange;
     static ImageView lastImageNeedChange;
+    LayoutInflater inflater;
+
 
 
     public HashMap<String, Option> getSurveyAnswer() {
@@ -85,6 +87,8 @@ public class QuestionListAdapter extends BaseAdapter {
             this.prevAnswer = prevAnswer;
             setEditingData();
         }
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
     }
 
     @Override
@@ -194,11 +198,11 @@ public class QuestionListAdapter extends BaseAdapter {
         return result;
     }
 
+    //// TODO: 31-Mar-16 fixing render problem 
     @Override
-    public View getView(final int position, View convertView, final ViewGroup parent) {
+    public View getView(int position, View convertView, final ViewGroup parent) {
         View v = convertView;
         boolean convertViewWasNull = false;
-        List<Option>options = questionList.get(position).getOPTIONS();
         int questionType = getItemViewType(position);
         RadioGroup radioGroup=null;
         EditText inputNumber=null;
@@ -211,13 +215,13 @@ public class QuestionListAdapter extends BaseAdapter {
         if (v == null) {
             convertViewWasNull = true;
             // Inflate the layout according to the view type
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = inflater.inflate(R.layout.component_soal, parent, false);
             LinearLayout soalLayout = (LinearLayout)v.findViewById(R.id.soalLayout);
             LinearLayout.LayoutParams soalParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
             soalParams.setMargins(dpToPx(21),dpToPx(5),dpToPx(35),dpToPx(2));
             if(questionType==Question.CHOICE){
+                List<Option>options = questionList.get(position).getOPTIONS();
                 RadioGroup.LayoutParams radioParams = new RadioGroup.LayoutParams(RadioGroup.LayoutParams.MATCH_PARENT,
                         RadioGroup.LayoutParams.WRAP_CONTENT);
                 radioGroup = (RadioGroup) inflater.inflate(R.layout.component_radiogroup,null);
@@ -247,6 +251,8 @@ public class QuestionListAdapter extends BaseAdapter {
 
             }
             else if(questionType==Question.MULTIPLE){
+                List<Option>options = questionList.get(position).getOPTIONS();
+
                 for(int i=0;i<options.size();i++){
                     CheckBox checkBox = (CheckBox)inflater.inflate(R.layout.component_checkbox,null);
                     checkBox.setId(Integer.parseInt(options.get(i).getOPTION_ID()));
@@ -384,6 +390,51 @@ public class QuestionListAdapter extends BaseAdapter {
             soalLayout.setBackgroundColor(Color.WHITE);
         return v;
     }
+    private static class ViewHolder{
+        TextView pertanyaan,nomorSoal,fileName;
+        LinearLayout soalLayout;
+        RadioGroup radioGroup;
+        TableLayout tableLayout;
+        Button chooseFile;
+        ImageView imageView;
+        List<CheckBox> checkBoxes = new ArrayList<>();
+        EditText inputNumber,inputText;
+    }/*
+    @Override
+    public View getView(int position, View convertView, final ViewGroup parent) {
+        boolean convertViewWasNull = false;
+        int questionType = getItemViewType(position);
+        ViewHolder holder = null;
+        if(convertView==null){
+            convertViewWasNull = true;
+            holder = new ViewHolder();
+            convertView = inflater.inflate(R.layout.component_soal,null);
+            holder.nomorSoal = (TextView)convertView.findViewById(R.id.nomorSoal);
+            holder.pertanyaan = (TextView)convertView.findViewById(R.id.textPertanyaan);
+            holder.soalLayout = (LinearLayout)convertView.findViewById(R.id.soalLayout);
+            if(questionType==Question.CHOICE){
+
+            }
+            else if(questionType==Question.MULTIPLE){
+
+            }
+            else if(questionType==Question.INPUT_TEXT){
+
+            }
+            else if(questionType==Question.INPUT_NUMBER){
+
+            }
+            else if(questionType==Question.UPLOAD){
+
+            }
+
+        }
+        else {
+
+        }
+
+        return convertView;
+    }*/
     Uri outputFileUri;
     private void openImageIntent() {
 // Determine Uri of camera image to save.

@@ -13,10 +13,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -960,6 +962,23 @@ public class SurveyQuestionActivity extends AppCompatActivity {
         startActivityForResult(chooserIntent, SurveyQuestionActivity.CHOOSE_IMAGE_CODE);
     }
 
+    // Save the activity state when it's going to stop.
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable("picUri", outputFileUri);
+    }
+
+    // Recover the saved state when the activity is recreated.
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        outputFileUri= savedInstanceState.getParcelable("picUri");
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != Activity.RESULT_CANCELED) {
@@ -978,7 +997,7 @@ public class SurveyQuestionActivity extends AppCompatActivity {
                     isCamera = action != null && action.equals(MediaStore.ACTION_IMAGE_CAPTURE);
                 }
                 Uri selectedImageUri;
-                String filePath;
+                String filePath="";
                 if (isCamera) {
                     if(data!=null)
                         Log.e("data intent",data.getDataString());
@@ -986,6 +1005,17 @@ public class SurveyQuestionActivity extends AppCompatActivity {
                     filePath=selectedImageUri.toString();
                 } else {
                     selectedImageUri = data == null ? null : data.getData();
+                    if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.KITKAT){
+                        filePath = RealPathUtil.getRealPathFromURI_API19(SurveyQuestionActivity.this,selectedImageUri);
+                    }
+                    else if(Build.VERSION.SDK_INT<=Build.VERSION_CODES.JELLY_BEAN_MR2 && Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB){
+                        filePath = RealPathUtil.getRealPathFromURI_API11to18(SurveyQuestionActivity.this,selectedImageUri);
+                    }
+                    else if(Build.VERSION.SDK_INT<Build.VERSION_CODES.HONEYCOMB){
+                        filePath = RealPathUtil.getRealPathFromURI_BelowAPI11(SurveyQuestionActivity.this,selectedImageUri);
+                    }
+
+                    /*
                     String[] filePathColumn = {MediaStore.Images.Media.DATA};
                     Cursor cursor = this.getContentResolver().query(selectedImageUri,filePathColumn,null,null,null);
                     if(cursor!=null) {
@@ -997,17 +1027,26 @@ public class SurveyQuestionActivity extends AppCompatActivity {
                     else{
                         Log.e("activity result","cursor null: ");
                         filePath = selectedImageUri.getPath();
-                    }
+                    }*/
                 }
-                Log.e("activity result", "path: " + filePath);
-                String buttonTag = (String)lastClickedUploadButton.getTag();
-                Log.e("activity result", "buttonTag event " + buttonTag);
-                String[]splitText = filePath.split("/");
-                lastTextNeedChange.setText(splitText[splitText.length-1]);
-                setImageViewFromPath(filePath,lastImageNeedChange);
-                Option dummy = new Option();
-                dummy.setTEXT(filePath);
-                surveyAnswer.put(buttonTag, dummy);
+                try {
+                    Log.e("activity result", "path: " + filePath);
+                    String buttonTag = (String) lastClickedUploadButton.getTag();
+                    Log.e("activity result", "buttonTag event " + buttonTag);
+                    if(filePath==null)
+                        filePath = selectedImageUri.getPath();
+                    Log.e("filepath",filePath);
+                    String[] splitText = filePath.split("/");
+                    lastTextNeedChange.setText(splitText[splitText.length - 1]);
+                    setImageViewFromPath(filePath, lastImageNeedChange);
+                    Option dummy = new Option();
+                    dummy.setTEXT(filePath);
+                    surveyAnswer.put(buttonTag, dummy);
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                    Toast.makeText(this,"Ooopppss telah terjadi sesuatu, mohon coba lagi",Toast.LENGTH_LONG).show();
+                }
             }
 
         }

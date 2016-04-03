@@ -162,7 +162,7 @@ public class RespondenceActivity extends AppCompatActivity{
                 if (actionId == IDLOCK) {
                     handler.setLockResponden(quickAction.RESPONDEN_ID, !isLocked);
                 } else if (actionId == IDUPLOAD) {
-                    Toast.makeText(getApplicationContext(), "files uploaded...!!! But not real", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "files uploaded...!!! But not real", Toast.LENGTH_SHORT).show();
                     RespondencesAnswer respondencesAnswer = new RespondencesAnswer(RespondenceActivity.this);
                     SubmitSurvey submitSurvey = new SubmitSurvey(RespondenceActivity.this);
                     submitSurvey.addDataToUpload(respondencesAnswer.getAnswerData(idSurvey, quickAction.RESPONDEN_ID));
@@ -189,7 +189,7 @@ public class RespondenceActivity extends AppCompatActivity{
                             .setNegativeButton("No", null)
                             .show();
                 } else if (actionId == IDEDIT) {
-                    Intent intent = new Intent(RespondenceActivity.this, QuestionActivity.class);
+                    Intent intent = new Intent(RespondenceActivity.this, SurveyQuestionActivity.class);
                     intent.putExtra("SURVEY_ID", idSurvey);
                     intent.putExtra("RESPONDENCE_ID", quickAction.RESPONDEN_ID);
                     intent.putExtra("isEditing", true);

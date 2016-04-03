@@ -9,14 +9,7 @@ public class Option {
     private String BOBOT;
     private String URUTAN;
     private String PERTANYAAN_ID;
-
-
-
-
-
-    public Option(){
-
-    }
+    public Option(){}
 
     public Option(String OPTION_ID, String TEXT, String BOBOT, String URUTAN,String PERTANYAAN_ID){
         this.OPTION_ID = OPTION_ID;
