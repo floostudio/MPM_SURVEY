@@ -1007,7 +1007,7 @@ public class SurveyQuestionActivity extends AppCompatActivity {
                     filePath=selectedImageUri.toString();
                 } else {
                     selectedImageUri = data == null ? null : data.getData();
-                    if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.KITKAT){
+                    /*if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.KITKAT){
                         filePath = RealPathUtil.getRealPathFromURI_API19(SurveyQuestionActivity.this,selectedImageUri);
                     }
                     else if(Build.VERSION.SDK_INT<=Build.VERSION_CODES.JELLY_BEAN_MR2 && Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB){
@@ -1015,9 +1015,9 @@ public class SurveyQuestionActivity extends AppCompatActivity {
                     }
                     else if(Build.VERSION.SDK_INT<Build.VERSION_CODES.HONEYCOMB){
                         filePath = RealPathUtil.getRealPathFromURI_BelowAPI11(SurveyQuestionActivity.this,selectedImageUri);
-                    }
+                    }*/
 
-                    /*
+
                     String[] filePathColumn = {MediaStore.Images.Media.DATA};
                     Cursor cursor = this.getContentResolver().query(selectedImageUri,filePathColumn,null,null,null);
                     if(cursor!=null) {
@@ -1029,7 +1029,7 @@ public class SurveyQuestionActivity extends AppCompatActivity {
                     else{
                         Log.e("activity result","cursor null: ");
                         filePath = selectedImageUri.getPath();
-                    }*/
+                    }
                 }
                 try {
                     Log.e("activity result", "path: " + filePath);
