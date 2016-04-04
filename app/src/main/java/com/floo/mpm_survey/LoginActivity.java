@@ -44,7 +44,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse{
 
         if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("GPS Disabled, Buka Setting dan Aktifkan GPS?")
+            builder.setMessage("Aplikasi ini membutuhkan GPS untuk mengakses lokasi, Buka Setting dan Aktifkan GPS?")
                     .setCancelable(false)
                     .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
                         public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
@@ -54,6 +54,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse{
                     .setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
                         public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                             dialog.cancel();
+                            LoginActivity.this.finish();
                         }
                     });
             final AlertDialog alert = builder.create();

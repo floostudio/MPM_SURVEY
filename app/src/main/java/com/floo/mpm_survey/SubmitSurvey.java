@@ -40,6 +40,8 @@ public class SubmitSurvey extends AsyncTask<String, Void, String> {
     ProgressDialog progressDialog;
     String activeSurveyorUsername="";
     String activeSurveyorName="";
+    DBHandler handler;
+
 
     public SubmitSurvey(Context context){
         this.context = context;
@@ -47,6 +49,7 @@ public class SubmitSurvey extends AsyncTask<String, Void, String> {
         LocalLoginData localLoginData = new LocalLoginData(context);
         activeSurveyorUsername = localLoginData.getPreference(LocalLoginData.keyActiveSurveyorUsername);
         activeSurveyorName = localLoginData.getPreference(LocalLoginData.keyActiveSurveyorNama);
+        handler = new DBHandler(context);
     }
     public void addDataToUpload(JSONObject savedAnswer){
         if(listSavedAnswers.size()==0)
@@ -86,14 +89,24 @@ public class SubmitSurvey extends AsyncTask<String, Void, String> {
                 Log.e("post data",savedAnswer.toString());
                 JSONObject dataRowToPost = new JSONObject();
                 JSONArray jawaban = new JSONArray();
+                String respondenID = savedAnswer.getString("RESPONDENCE_ID");
 
                 dataRowToPost.put("id_surveyor", activeSurveyorUsername);
                 dataRowToPost.put("id_survey", savedAnswer.getString("SURVEY_ID"));
-                dataRowToPost.put("id_responden_temp", savedAnswer.getString("RESPONDENCE_ID"));
+                dataRowToPost.put("id_responden_temp", respondenID);
                 //change nama_responden content to surveyor name
                 //dataRowToPost.put("nama_responden", savedAnswer.getString("RESPONDENCE_NAME"));
                 //// TODO: 30-Mar-16 check which one is correct
                 dataRowToPost.put("nama_responden", activeSurveyorName);
+                Responden responden = handler.getRespondenByID(respondenID);
+                if(responden!=null) {
+                    dataRowToPost.put("latitude", responden.getLATITUDE());
+                    dataRowToPost.put("longitude", responden.getLONGITUDE());
+                }
+                else{
+                    dataRowToPost.put("latitude", "");
+                    dataRowToPost.put("longitude", "");
+                }
                 //or
                 //dataRowToPost.put("nama_surveyor", activeSurveyorName);
 
@@ -191,7 +204,7 @@ public class SubmitSurvey extends AsyncTask<String, Void, String> {
         try {
             JSONObject resultData = new JSONObject(result);
             if(resultData.getString("Status").equalsIgnoreCase("berhasil")){//ketika seluruh data submit berhasil maka di dalam objek keterangan kososng
-                DBHandler handler = new DBHandler(context);
+
                 JSONArray respondError = resultData.getJSONArray("RESPOND_ANSWER_ERROR");
 
                 for(int i=0;i<respondError.length();i++){

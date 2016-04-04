@@ -264,6 +264,37 @@ public class DBHandler extends SQLiteOpenHelper {
         }
         return answerList;
     }
+    public Responden getRespondenByID(String respondenID){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Responden result = null;
+        try {
+            //answerList = new ArrayList<>();
+            //String QUERY = "SELECT * FROM " + TABLE_RESPONDENCE+ " WHERE "+ KEY_RESPONDENCE_IDSURVEY +" = "+"'"+id_survey+"'";
+            String QUERY = "SELECT * FROM " + TABLE_RESPONDENCE+
+                    " WHERE "+ KEY_RESPONDENCE_ID+" = "+"'"+respondenID+"'";
+            Cursor cursor = db.rawQuery(QUERY, null);
+            if (!cursor.isLast()) {
+                while (cursor.moveToNext()) {
+                    Responden responden = new Responden();
+                    responden.setID_RESPONDENCE(cursor.getString(0));
+                    responden.setNAMA_RESPONDENCE(cursor.getString(1));
+                    responden.setLOCKED(cursor.getInt(2) > 0);
+                    responden.setCRETAED_AT(cursor.getString(3));
+                    responden.setLAST_MODIFIED(cursor.getString(4));
+                    responden.setLATITUDE(cursor.getString(5));
+                    responden.setLONGITUDE(cursor.getString(6));
+                    responden.setFINAL(cursor.getInt(7) > 0);
+                    responden.setUPLOADED(cursor.getInt(8)>0);
+                    result = responden;
+                    //answerList.add(responden);
+                }
+            }
+            db.close();
+        } catch (Exception e) {
+            Log.e("error", e + "");
+        }
+        return result;
+    }
     public ArrayList<Responden> getAllLockedResponden(String id_survey){
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<Responden> answerList = null;
