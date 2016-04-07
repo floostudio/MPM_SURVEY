@@ -289,7 +289,7 @@ public class SurveyQuestionActivity extends AppCompatActivity {
         new AlertDialog.Builder(SurveyQuestionActivity.this)
                 .setIcon(R.mipmap.icon)
                 .setCancelable(false)
-                .setTitle("Konfrmasi")
+                .setTitle("Konfirmasi")
                 .setMessage("Hey, Semua perubahan yang terjadi tidak akan tersimpan.\nApakah Anda yakin untuk keluar?")
                 .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
                     @Override

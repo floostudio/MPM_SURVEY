@@ -77,9 +77,8 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse{
             public void onClick(View v) {
                 //for debug only
 
-
-                EdtUser.setText("KRISHNA", TextView.BufferType.EDITABLE);
-                EdtPassword.setText("KRISHNA01", TextView.BufferType.EDITABLE);
+                //EdtUser.setText("KRISHNA", TextView.BufferType.EDITABLE);
+                //EdtPassword.setText("KRISHNA01", TextView.BufferType.EDITABLE);
 
                 final String us = EdtUser.getText().toString();
                 final String pw = EdtPassword.getText().toString();
