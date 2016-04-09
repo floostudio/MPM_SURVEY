@@ -40,12 +40,12 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse{
 
 
         //location
-        /*
+
         final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
 
-        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) && !manager.isProviderEnabled( LocationManager.NETWORK_PROVIDER ) ) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Aplikasi ini membutuhkan GPS untuk mengakses lokasi, Buka Setting dan Aktifkan GPS?")
+            builder.setMessage("Aplikasi ini membutuhkan akses lokasi, Buka Setting dan Aktifkan Layanan Lokasi?")
                     .setCancelable(false)
                     .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
                         public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
@@ -55,17 +55,11 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse{
                     .setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
                         public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                             dialog.cancel();
-                            LoginActivity.this.finish();
                         }
                     });
             final AlertDialog alert = builder.create();
             alert.show();
         }
-        else
-        {
-            Toast.makeText(getApplicationContext(), "GPS Enabled", Toast.LENGTH_LONG).show();
-        }
-        */
 
         EdtUser = (EditText) findViewById(R.id.edtUser);
         //EdtUser.setTypeface(font);

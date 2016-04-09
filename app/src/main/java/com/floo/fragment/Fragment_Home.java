@@ -83,15 +83,10 @@ public class Fragment_Home extends Fragment implements AsyncResponse {
             dataFetcherTask.execute();
             progressDialog = ProgressDialog.show(getActivity(), "Mohon Tunggu",
                     "Inisialisasi Data.....", true);
+
         }
         else
         {
-            /*
-            ArrayList<Survey> surveyList = handler.getAllSurvey();
-
-            adapter = new Survey_Adapter(context,surveyList);
-            listSurvey.setAdapter(adapter);
-            */
             setListSurvey();
         }
         return v;
@@ -101,11 +96,6 @@ public class Fragment_Home extends Fragment implements AsyncResponse {
     public void processFinish(String output) {
 
         if(output!=null){
-            /*
-            ArrayList<Survey> surveyList = handler.getAllSurvey();
-            adapter = new Survey_Adapter(context,surveyList);
-            listSurvey.setAdapter(adapter);
-            */
             setListSurvey();
         }
         else{

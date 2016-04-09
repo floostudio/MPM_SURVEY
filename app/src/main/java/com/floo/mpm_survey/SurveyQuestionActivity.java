@@ -64,7 +64,7 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 
-public class SurveyQuestionActivity extends AppCompatActivity implements LocationListener{
+public class SurveyQuestionActivity extends AppCompatActivity{
     TextView txtName;
     DBHandler handler;
     Button btnSave, btnCancel;
@@ -81,24 +81,14 @@ public class SurveyQuestionActivity extends AppCompatActivity implements Locatio
     public static int CHOOSE_IMAGE_CODE = 988;
     //PERTANYAAN
     ArrayList<Question> questionList;
-    QuestionListAdapter adapter;
-
     static Button lastClickedUploadButton;
     static TextView lastTextNeedChange;
     static ImageView lastImageNeedChange;
+    GPSTracker gpsTracker;
 
     HashMap<String, Option> surveyAnswer;
 
     List<LinearLayout>soalLayoutHolders;
-
-    LocationManager locMgr;
-    String locProvider;
-    // The minimum distance to change Updates in meters
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 20; // 20 meters
-
-    // The minimum time between updates in milliseconds
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 1 minute
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,35 +104,13 @@ public class SurveyQuestionActivity extends AppCompatActivity implements Locatio
         surveyAnswer = new HashMap<>();
         soalLayoutHolders = new ArrayList<>();
 
-        locMgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-        locProvider = LocationManager.NETWORK_PROVIDER;
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        Location lastKnownLocation = locMgr.getLastKnownLocation(locProvider);
-        strLatitude = String.valueOf(lastKnownLocation.getLatitude());
-        strLongitude = String.valueOf(lastKnownLocation.getLongitude());
-
-        Log.e("location","lat: "+strLatitude+" lng: "+strLongitude);
-        Criteria cr = new Criteria();
-        cr.setAccuracy(Criteria.ACCURACY_FINE);
-
-        locProvider = locMgr.getBestProvider(cr, false);
-
-
         respondencesAnswer = new RespondencesAnswer(SurveyQuestionActivity.this);
-        //listPertanyaan = (ListView) findViewById(R.id.list_pertanyaan);
         listPertanyaan = (LinearLayout) findViewById(R.id.questionHolder);
         txtName = (TextView) findViewById(R.id.textViewNama);
         btnSave = (Button) findViewById(R.id.btn_Save);
         btnCancel = (Button) findViewById(R.id.btn_Cancel);
         unAnsweredQuestionID = new ArrayList<>();
         answeredQuestion = new ArrayList<>();
-
-        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-
         if(!isEditing) {
             showInputUser();
             btnSave.setText("SAVE");
@@ -159,10 +127,17 @@ public class SurveyQuestionActivity extends AppCompatActivity implements Locatio
             }
         }
         handler = new DBHandler(this);
-        //GPSTracker gpsTracker = new GPSTracker(this);
-        //strLatitude = String.valueOf(gpsTracker.latitude);
-        //strLongitude = String.valueOf(gpsTracker.longitude);
+        gpsTracker = new GPSTracker(this);
+        strLatitude = String.valueOf(gpsTracker.latitude);
+        strLongitude = String.valueOf(gpsTracker.longitude);
+
+        if(!gpsTracker.isGPSTrackingEnabled) {
+            strLatitude = "null";
+            strLongitude = "null";
+        }
+
         questionList = handler.getAllQuestion(idSurvey);
+        Log.e("location","lat: "+strLatitude+" lng: "+strLongitude);
         for(Question question:questionList){
             question.setOPTIONS(handler.getOptionsByPertanyaanID(question.getPertanyaan_id()));
         }
@@ -257,6 +232,18 @@ public class SurveyQuestionActivity extends AppCompatActivity implements Locatio
             }
         });
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try{
+            gpsTracker.stopUsingGPS();
+        }
+        catch (Exception e){
+            Log.e("tag","gps cant stop");
+        }
+    }
+
     private void setEditingData(JSONArray prevAnswer){
         for(int i=0;i<prevAnswer.length();i++)
         {
@@ -418,24 +405,6 @@ public class SurveyQuestionActivity extends AppCompatActivity implements Locatio
     @Override
     public void onBackPressed() {
        exitConfirmation();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        locMgr.requestLocationUpdates(locProvider, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        locMgr.removeUpdates(this);
     }
 
     private String getDateTime() {
@@ -657,7 +626,7 @@ public class SurveyQuestionActivity extends AppCompatActivity implements Locatio
             listPertanyaan.addView(row);
         }
         ScrollView scrollView = (ScrollView)findViewById(R.id.scrollView);
-        scrollView.smoothScrollTo(0,0);
+        scrollView.smoothScrollTo(0, 0);
 
     }
 
@@ -785,31 +754,6 @@ public class SurveyQuestionActivity extends AppCompatActivity implements Locatio
         }
 
     }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        strLatitude = String.valueOf(location.getLatitude());
-        strLongitude = String.valueOf(location.getLongitude());
-        Log.e("location","lat: "+strLatitude+" lng: "+strLongitude);
-
-
-    }
-
-    @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String s) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String s) {
-
-    }
-
     private class RadioGroupChangedListener implements RadioGroup.OnCheckedChangeListener{
 
         private View view;
