@@ -7,8 +7,9 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="30dp"
-        android:src="@drawable/logohondavertikal"
-        android:layout_margin="40dp" />
+        android:adjustViewBounds="true"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:src="@drawable/logomost" />
 
 </RelativeLayout>

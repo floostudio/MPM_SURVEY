@@ -1,8 +1,10 @@
 package com.floo.mpm_survey;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,13 +14,17 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -58,14 +64,14 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 
-public class SurveyQuestionActivity extends AppCompatActivity {
+public class SurveyQuestionActivity extends AppCompatActivity implements LocationListener{
     TextView txtName;
     DBHandler handler;
     Button btnSave, btnCancel;
     JSONObject savedAnswer;
     static long respondenceID;
     static String idSurvey;
-    String strLatitude, strLongtitude, respondenceName;
+    String strLatitude, strLongitude, respondenceName;
     boolean isEditing = false;
     RespondencesAnswer respondencesAnswer;
     List<String> unAnsweredQuestionID;
@@ -84,6 +90,15 @@ public class SurveyQuestionActivity extends AppCompatActivity {
     HashMap<String, Option> surveyAnswer;
 
     List<LinearLayout>soalLayoutHolders;
+
+    LocationManager locMgr;
+    String locProvider;
+    // The minimum distance to change Updates in meters
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 20; // 20 meters
+
+    // The minimum time between updates in milliseconds
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 1 minute
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,6 +113,24 @@ public class SurveyQuestionActivity extends AppCompatActivity {
         /*initView();*/
         surveyAnswer = new HashMap<>();
         soalLayoutHolders = new ArrayList<>();
+
+        locMgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        locProvider = LocationManager.NETWORK_PROVIDER;
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        Location lastKnownLocation = locMgr.getLastKnownLocation(locProvider);
+        strLatitude = String.valueOf(lastKnownLocation.getLatitude());
+        strLongitude = String.valueOf(lastKnownLocation.getLongitude());
+
+        Log.e("location","lat: "+strLatitude+" lng: "+strLongitude);
+        Criteria cr = new Criteria();
+        cr.setAccuracy(Criteria.ACCURACY_FINE);
+
+        locProvider = locMgr.getBestProvider(cr, false);
+
 
         respondencesAnswer = new RespondencesAnswer(SurveyQuestionActivity.this);
         //listPertanyaan = (ListView) findViewById(R.id.list_pertanyaan);
@@ -126,35 +159,14 @@ public class SurveyQuestionActivity extends AppCompatActivity {
             }
         }
         handler = new DBHandler(this);
-        GPSTracker gpsTracker = new GPSTracker(this);
-        strLatitude = String.valueOf(gpsTracker.latitude);
-        strLongtitude = String.valueOf(gpsTracker.longitude);
-
-        NetworkUtils utils = new NetworkUtils(SurveyQuestionActivity.this);
-/*
-        if(handler.getQuestionCount(idSurvey) == 0 && utils.isConnectingToInternet())
-        {
-            new DataPertanyaanTask().execute();
-        }
-        else
-        {
-            //ArrayList<Question> tanyaList = handler.getAllQuestion(idSurvey);
-            questionList = handler.getAllQuestion(idSurvey);
-            adapter = new QuestionListAdapter(this,questionList);
-            listPertanyaan.setAdapter(adapter);
-            //adapter = new RespondenAdapter(RespondenceActivity.this,tanyaList);
-            //lis_page_3.setAdapter(adapter);
-        }*/
+        //GPSTracker gpsTracker = new GPSTracker(this);
+        //strLatitude = String.valueOf(gpsTracker.latitude);
+        //strLongitude = String.valueOf(gpsTracker.longitude);
         questionList = handler.getAllQuestion(idSurvey);
         for(Question question:questionList){
             question.setOPTIONS(handler.getOptionsByPertanyaanID(question.getPertanyaan_id()));
         }
-        /*if (savedInstanceState != null
-                && savedInstanceState.containsKey(LIST_INSTANCE_STATE)) {
-            listPertanyaan.onRestoreInstanceState(savedInstanceState
-                    .getParcelable(LIST_INSTANCE_STATE));
-            adapter = (QuestionListAdapter)listPertanyaan.getAdapter();
-        }else {*/
+
         if (isEditing){
             try {
                 JSONArray unAnswered = savedAnswer.getJSONArray("UNANSWERED_QUESTION_ID");
@@ -175,17 +187,12 @@ public class SurveyQuestionActivity extends AppCompatActivity {
         }
         else {
             generateSurvey();
-            //adapter = new QuestionListAdapter(this, questionList, isEditing, new JSONArray());
-        }
-        //listPertanyaan.setAdapter(adapter);
-        //listPertanyaan.smoothScrollToPosition(0);
-        //}
 
+        }
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                //HashMap<String, Option> surveyResult = adapter.getSurveyAnswer();
                 String title;
                 String message;
                 if(!isEditing) {
@@ -287,7 +294,7 @@ public class SurveyQuestionActivity extends AppCompatActivity {
 
     private void exitConfirmation(){
         new AlertDialog.Builder(SurveyQuestionActivity.this)
-                .setIcon(R.mipmap.icon)
+                .setIcon(android.R.drawable.ic_dialog_alert)
                 .setCancelable(false)
                 .setTitle("Konfrmasi")
                 .setMessage("Hey, Semua perubahan yang terjadi tidak akan tersimpan.\nApakah Anda yakin untuk keluar?")
@@ -312,7 +319,7 @@ public class SurveyQuestionActivity extends AppCompatActivity {
                 .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Responden respondence = new Responden(respondenceName, false, getDateTime(), getDateTime(), strLatitude, strLongtitude, false, false);
+                        Responden respondence = new Responden(respondenceName, false, getDateTime(), getDateTime(), strLatitude, strLongitude, false, false);
                         respondenceID = handler.addResponden(respondence, idSurvey);
                         respondencesAnswer.saveAnswerData(idSurvey, respondenceID + "", respondenceName, answeredQuestion, unAnsweredQuestionID);
                         dialog.dismiss();
@@ -334,7 +341,7 @@ public class SurveyQuestionActivity extends AppCompatActivity {
                 .setNeutralButton("Ya & Final", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Responden respondence = new Responden(respondenceName, false, getDateTime(), getDateTime(), strLatitude, strLongtitude, true, false);
+                        Responden respondence = new Responden(respondenceName, false, getDateTime(), getDateTime(), strLatitude, strLongitude, true, false);
                         respondenceID = handler.addResponden(respondence, idSurvey);
                         respondencesAnswer.saveAnswerData(idSurvey, respondenceID + "", respondenceName, answeredQuestion, unAnsweredQuestionID);
                         dialog.dismiss();
@@ -353,7 +360,7 @@ public class SurveyQuestionActivity extends AppCompatActivity {
                 .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        handler.updateRespondenceLastModified(respondenceID+"",getDateTime(),strLatitude,strLongtitude);
+                        handler.updateRespondenceLastModified(respondenceID+"",getDateTime(),strLatitude, strLongitude);
                         respondencesAnswer.saveAnswerData(idSurvey, respondenceID + "", respondenceName, answeredQuestion, unAnsweredQuestionID);
                         dialog.dismiss();
                         unAnsweredQuestionID.clear();
@@ -377,7 +384,7 @@ public class SurveyQuestionActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         handler.setFinalResponden(respondenceID+"",true);
-                        handler.updateRespondenceLastModified(respondenceID+"",getDateTime(),strLatitude,strLongtitude);
+                        handler.updateRespondenceLastModified(respondenceID+"",getDateTime(),strLatitude, strLongitude);
                         respondencesAnswer.saveAnswerData(idSurvey, respondenceID + "", respondenceName, answeredQuestion, unAnsweredQuestionID);
                         dialog.dismiss();
                         unAnsweredQuestionID.clear();
@@ -412,30 +419,24 @@ public class SurveyQuestionActivity extends AppCompatActivity {
     public void onBackPressed() {
        exitConfirmation();
     }
-/*
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //super.onActivityResult(requestCode, resultCode, data);
-        if(adapter!=null) {
-            adapter.onActivityResult(requestCode, resultCode, data);
+    protected void onResume() {
+        super.onResume();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
         }
-        else{
-            Toast.makeText(this,"Oooppsss telah terjadi sesuatu, mohon coba lagi",Toast.LENGTH_LONG).show();
-            finish();
-        }
-    }
-    /*
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable(LIST_INSTANCE_STATE, listPertanyaan.onSaveInstanceState());
+        locMgr.requestLocationUpdates(locProvider, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        listPertanyaan.onRestoreInstanceState(savedInstanceState.getParcelable(LIST_INSTANCE_STATE));
-    }*/
+    protected void onPause() {
+        super.onPause();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        locMgr.removeUpdates(this);
+    }
 
     private String getDateTime() {
         SimpleDateFormat dateFormat = new SimpleDateFormat(
@@ -689,57 +690,29 @@ public class SurveyQuestionActivity extends AppCompatActivity {
                             }
 
                         });
-                // your action goes here
-                //HashMap<String,Option> surveyResult = adapter.getSurveyAnswer();
                 int pos = 0;
                 for (Question question : questionList) {
                     List<Option> options = searchResultAnswerBy(question.getPertanyaan_id(), surveyAnswer);
                     LinearLayout row = soalLayoutHolders.get(pos);
-                    //Log.e("row",row.getId()+"");
                     if (options.size() > 0) {
                         Question temp = new Question(question.getPertanyaan_id(), question.getPertanyaan(), question.getJenis_jawaban(), question.getUrutan(), idSurvey);
                         temp.setOPTIONS(options);
                         answeredQuestion.add(temp);
                         question.setAnswered(true);
                         row.setBackgroundColor(Color.WHITE);
-
-                        //Log.e("answered id",temp.getPertanyaan_id());
                     } else {
                         unAnsweredQuestionID.add(question.getPertanyaan_id());
                         question.setAnswered(false);
                         row.setBackgroundColor(ContextCompat.getColor(this, R.color.accent));
-
-                        //Log.e("un answered id", question.getPertanyaan_id());
                     }
 
                     pos++;
                 }
                 if(unAnsweredQuestionID.size()>0) {
-                    //List<Question> questions= adapter.getQuestionList();
-                    /*for(Question question:questionList){
-                        for(String questionID:unAnsweredQuestionID){
-                            if(question.getPertanyaan_id().equals(questionID)){
-                                question.setAnswered(false);
-                                break;
-                            }
-                        }
-                    }*/
-                    //adapter.notifyDataSetChanged();
                     builder.setMessage("Ada beberapa pertanyaan yang belum terisi");
                     builder.show();
                 }
                 else{
-                    /*
-                    for(Question question:questionList){
-                        for(String questionID:unAnsweredQuestionID){
-                            if(question.getPertanyaan_id().equals(questionID)){
-                                question.setAnswered(true);
-                                break;
-                            }
-                        }
-                    }
-                    */
-
                     builder.setMessage("Semua pertanyaan telah terisi");
                     builder.show();
                 }
@@ -810,6 +783,30 @@ public class SurveyQuestionActivity extends AppCompatActivity {
             imageView.setVisibility(View.GONE);
             Log.e("image file", "not exist");
         }
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        strLatitude = String.valueOf(location.getLatitude());
+        strLongitude = String.valueOf(location.getLongitude());
+        Log.e("location","lat: "+strLatitude+" lng: "+strLongitude);
+
+
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
 
     }
 

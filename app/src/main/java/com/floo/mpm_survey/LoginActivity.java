@@ -40,6 +40,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse{
 
 
         //location
+        /*
         final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
 
         if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
@@ -64,6 +65,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse{
         {
             Toast.makeText(getApplicationContext(), "GPS Enabled", Toast.LENGTH_LONG).show();
         }
+        */
 
         EdtUser = (EditText) findViewById(R.id.edtUser);
         //EdtUser.setTypeface(font);
