@@ -12,4 +12,5 @@
         android:paddingRight="8dp"
         android:src="@drawable/logomost" />
 
+
 </RelativeLayout>

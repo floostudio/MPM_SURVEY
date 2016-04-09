@@ -296,7 +296,7 @@ public class SurveyQuestionActivity extends AppCompatActivity implements Locatio
         new AlertDialog.Builder(SurveyQuestionActivity.this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setCancelable(false)
-                .setTitle("Konfrmasi")
+                .setTitle("Konfirmasi")
                 .setMessage("Hey, Semua perubahan yang terjadi tidak akan tersimpan.\nApakah Anda yakin untuk keluar?")
                 .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
                     @Override
