@@ -10,7 +10,6 @@ import android.util.Log;
 import com.floo.mpm_survey.Option;
 import com.floo.mpm_survey.Question;
 import com.floo.mpm_survey.Responden;
-import com.floo.mpm_survey.PublicListener;
 import com.floo.mpm_survey.RespondenceActivity;
 import com.floo.mpm_survey.Survey;
 
@@ -158,22 +157,29 @@ public class DBHandler extends SQLiteOpenHelper {
         return surveyList;
     }
 
-
-    public int getSurveyCount() {
-        int num = 0;
+    public ArrayList<String> getAllSurveyID() {
         SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<String> surveyList = null;
         try {
+            surveyList = new ArrayList<>();
             String QUERY = "SELECT * FROM " + TABLE_SURVEY;
             Cursor cursor = db.rawQuery(QUERY, null);
-            num = cursor.getCount();
+            if (!cursor.isLast()) {
+                while (cursor.moveToNext()) {
+                    surveyList.add(cursor.getString(0));
+                }
+            }
             db.close();
-            return num;
         } catch (Exception e) {
             Log.e("error", e + "");
         }
-        return 0;
+        return surveyList;
     }
 
+    public void deleteSurveyByID(String surveyID){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from " + TABLE_SURVEY + " where "+ KEY_SURVEYID+"='" + surveyID+ "'");
+    }
     /*----------T A B L E  P E R T A N Y A A N----------*/
     public void addQuestion(Question question) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -216,22 +222,30 @@ public class DBHandler extends SQLiteOpenHelper {
         }
         return questionList;
     }
-
-
-    public int getQuestionCount(String id_survey) {
-        int num = 0;
+    public ArrayList<String> getAllPertanyaanID() {
         SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<String> surveyList = null;
         try {
-            String QUERY = "SELECT * FROM " + TABLE_PERTANYAAN + " WHERE "+KEY_PERTANYAAN_IDSURVEY+" = "+"'"+id_survey+"'";
+            surveyList = new ArrayList<>();
+            String QUERY = "SELECT * FROM " + TABLE_PERTANYAAN;
             Cursor cursor = db.rawQuery(QUERY, null);
-            num = cursor.getCount();
+            if (!cursor.isLast()) {
+                while (cursor.moveToNext()) {
+                    surveyList.add(cursor.getString(0));
+                }
+            }
             db.close();
-            return num;
         } catch (Exception e) {
             Log.e("error", e + "");
         }
-        return 0;
+        return surveyList;
     }
+
+    public void deletePertanyaanByID(String pertanyaanID){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from " + TABLE_PERTANYAAN + " where "+ KEY_IDPERTANYAAN+"='" + pertanyaanID+ "'");
+    }
+
 
     /*----------T A B L E  R E S P O N D E N----------*/
     public ArrayList<Responden> getAllResponden(String id_survey){
@@ -249,7 +263,7 @@ public class DBHandler extends SQLiteOpenHelper {
                     responden.setID_RESPONDENCE(cursor.getString(0));
                     responden.setNAMA_RESPONDENCE(cursor.getString(1));
                     responden.setLOCKED(cursor.getInt(2) > 0);
-                    responden.setCRETAED_AT(cursor.getString(3));
+                    responden.setCREATED_AT(cursor.getString(3));
                     responden.setLAST_MODIFIED(cursor.getString(4));
                     responden.setLATITUDE(cursor.getString(5));
                     responden.setLONGITUDE(cursor.getString(6));
@@ -279,7 +293,7 @@ public class DBHandler extends SQLiteOpenHelper {
                     responden.setID_RESPONDENCE(cursor.getString(0));
                     responden.setNAMA_RESPONDENCE(cursor.getString(1));
                     responden.setLOCKED(cursor.getInt(2) > 0);
-                    responden.setCRETAED_AT(cursor.getString(3));
+                    responden.setCREATED_AT(cursor.getString(3));
                     responden.setLAST_MODIFIED(cursor.getString(4));
                     responden.setLATITUDE(cursor.getString(5));
                     responden.setLONGITUDE(cursor.getString(6));
@@ -311,7 +325,7 @@ public class DBHandler extends SQLiteOpenHelper {
                     responden.setID_RESPONDENCE(cursor.getString(0));
                     responden.setNAMA_RESPONDENCE(cursor.getString(1));
                     responden.setLOCKED(cursor.getInt(2) > 0);
-                    responden.setCRETAED_AT(cursor.getString(3));
+                    responden.setCREATED_AT(cursor.getString(3));
                     responden.setLAST_MODIFIED(cursor.getString(4));
                     responden.setLATITUDE(cursor.getString(5));
                     responden.setLONGITUDE(cursor.getString(6));
@@ -335,7 +349,7 @@ public class DBHandler extends SQLiteOpenHelper {
             values.put(KEY_RESPONDENCE_NAME, responden.getNAMA_RESPONDENCE());
             values.put(KEY_RESPONDENCE_IS_LOCK, responden.isLOCKED());
             values.put(KEY_LASTMODIFIED_RESPONDENCE, responden.getLAST_MODIFIED());
-            values.put(KEY_CREATE_AT_RESPONDENCE, responden.getCRETAED_AT());
+            values.put(KEY_CREATE_AT_RESPONDENCE, responden.getCREATED_AT());
             values.put(KEY_LATITUDE_RESPONDENCE, responden.getLATITUDE());
             values.put(KEY_LONGITUDE_RESPONDENCE, responden.getLONGITUDE());
             values.put(KEY_RESPONDENCE_IS_FINAL, responden.isFINAL());
@@ -461,5 +475,29 @@ public class DBHandler extends SQLiteOpenHelper {
         }
         db.close();
         return options;
+    }
+
+    public ArrayList<String> getAllOptionID() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<String> surveyList = null;
+        try {
+            surveyList = new ArrayList<>();
+            String QUERY = "SELECT * FROM " + TABLE_OPTION;
+            Cursor cursor = db.rawQuery(QUERY, null);
+            if (!cursor.isLast()) {
+                while (cursor.moveToNext()) {
+                    surveyList.add(cursor.getString(0));
+                }
+            }
+            db.close();
+        } catch (Exception e) {
+            Log.e("error", e + "");
+        }
+        return surveyList;
+    }
+
+    public void deleteOptionByID(String optionID){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from " + TABLE_OPTION + " where " + KEY_OPTION_ID+ "='" + optionID + "'");
     }
 }

@@ -18,6 +18,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by dimas on 2/17/2016.
@@ -72,7 +73,9 @@ public class DataFetcherTask extends AsyncTask<Void,Void,String> {
 
     @Override
     protected String doInBackground(Void... params) {
-
+        List<String>listSurveyID = new ArrayList<>();
+        List<String>listPertanyaanID = new ArrayList<>();
+        List<String>listOpsiID = new ArrayList<>();
 
         String headerKey = getHeaderKey();
         String serverData = "";// String object to store fetched data from server
@@ -118,6 +121,7 @@ public class DataFetcherTask extends AsyncTask<Void,Void,String> {
                 survey.setIs_aktif(isaktif);
                 survey.setJenis_respondence(jenisresponc);
                 survey.setLast_modified(lastmofied);
+                listSurveyID.add(surveyid);
                 handler.addSurvey(survey);// Inserting into DB
 
                 JSONArray respon1 = jsonObjectCity.getJSONArray("PERTANYAAN");
@@ -136,6 +140,7 @@ public class DataFetcherTask extends AsyncTask<Void,Void,String> {
                     question.setUrutan(urutan);
                     question.setSurvey_id(surveyid);
                     handler.addQuestion(question);// Inserting into DB
+                    listPertanyaanID.add(idtanya);
 
                     JSONArray options = objektanya.getJSONArray("OPTION");
                     //Log.e("options",options.toString());
@@ -150,6 +155,7 @@ public class DataFetcherTask extends AsyncTask<Void,Void,String> {
                             option.setURUTAN(optionObj.getString("URUTAN"));
                             option.setPERTANYAAN_ID(idtanya);
                             handler.addOption(option);
+                            listOpsiID.add(optionObj.getString("OPTION_ID"));
                         }
                     }
                 }
@@ -158,6 +164,28 @@ public class DataFetcherTask extends AsyncTask<Void,Void,String> {
             e.printStackTrace();
             return null;
         }
+        List<String>DB_listSurveyID = handler.getAllSurveyID();
+        List<String>DB_listPertanyaanID = handler.getAllPertanyaanID();
+        List<String>DB_listOptionID = handler.getAllOptionID();
+
+        /**
+         * this function is for check and delete non existing ID from DB in server
+         */
+        DB_listOptionID.removeAll(listOpsiID);
+        DB_listPertanyaanID.removeAll(listPertanyaanID);
+        DB_listSurveyID.removeAll(listSurveyID);
+
+        for(String id:DB_listOptionID){
+            handler.deleteOptionByID(id);
+        }
+        for(String id:DB_listPertanyaanID){
+            handler.deletePertanyaanByID(id);
+        }
+        for(String id:DB_listSurveyID){
+            handler.deleteSurveyByID(id);
+        }
+
+
         return "executed";
     }
 }

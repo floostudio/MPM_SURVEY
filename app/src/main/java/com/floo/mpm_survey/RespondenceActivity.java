@@ -80,9 +80,6 @@ public class RespondenceActivity extends AppCompatActivity{
         btnNew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*Intent aa=new Intent(RespondenceActivity.this, QuestionActivity.class);
-                aa.putExtra("SURVEY_ID", idSurvey);
-                startActivity(aa);*/
                 Intent aa=new Intent(RespondenceActivity.this, SurveyQuestionActivity.class);
                 aa.putExtra("SURVEY_ID", idSurvey);
                 startActivity(aa);
@@ -93,18 +90,24 @@ public class RespondenceActivity extends AppCompatActivity{
         btnUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<Responden>lockedResponden = handler.getAllLockedResponden(idSurvey);
-                RespondencesAnswer lockedRespondenAnswer = new RespondencesAnswer(RespondenceActivity.this);
-                SubmitSurvey submitSurvey = new SubmitSurvey(RespondenceActivity.this);
-                for(Responden responden:lockedResponden){
-                    String respondenID = responden.getID_RESPONDENCE();
-                    JSONObject savedAnswer = lockedRespondenAnswer.getAnswerData(idSurvey,respondenID);
-                    submitSurvey.addDataToUpload(savedAnswer);
-                    //handler.setUploadedResponden(respondenID);
+                NetworkUtils utils = new NetworkUtils(RespondenceActivity.this);
+                if(utils.isConnectingToInternet()) {
+                    List<Responden> lockedResponden = handler.getAllLockedResponden(idSurvey);
+                    RespondencesAnswer lockedRespondenAnswer = new RespondencesAnswer(RespondenceActivity.this);
+                    SubmitSurvey submitSurvey = new SubmitSurvey(RespondenceActivity.this);
+                    for (Responden responden : lockedResponden) {
+                        String respondenID = responden.getID_RESPONDENCE();
+                        JSONObject savedAnswer = lockedRespondenAnswer.getAnswerData(idSurvey, respondenID);
+                        submitSurvey.addDataToUpload(savedAnswer);
+                        //handler.setUploadedResponden(respondenID);
+                    }
+                    if (lockedResponden.size() > 0) {
+                        submitSurvey.execute();
+                        //RefreshList();
+                    }
                 }
-                if(lockedResponden.size()>0){
-                    submitSurvey.execute();
-                    //RefreshList();
+                else{
+                    Toast.makeText(RespondenceActivity.this,"Upload gagal!\n Pastikan Anda terhubung dengan internet",Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -163,12 +166,18 @@ public class RespondenceActivity extends AppCompatActivity{
                     handler.setLockResponden(quickAction.RESPONDEN_ID, !isLocked);
                 } else if (actionId == IDUPLOAD) {
                     //Toast.makeText(getApplicationContext(), "files uploaded...!!! But not real", Toast.LENGTH_SHORT).show();
-                    RespondencesAnswer respondencesAnswer = new RespondencesAnswer(RespondenceActivity.this);
-                    SubmitSurvey submitSurvey = new SubmitSurvey(RespondenceActivity.this);
-                    submitSurvey.addDataToUpload(respondencesAnswer.getAnswerData(idSurvey, quickAction.RESPONDEN_ID));
-                    submitSurvey.execute();
-                    //handler.setUploadedResponden(quickAction.RESPONDEN_ID);
-                    //RefreshList();
+                    NetworkUtils utils = new NetworkUtils(RespondenceActivity.this);
+                    if(utils.isConnectingToInternet()) {
+                        RespondencesAnswer respondencesAnswer = new RespondencesAnswer(RespondenceActivity.this);
+                        SubmitSurvey submitSurvey = new SubmitSurvey(RespondenceActivity.this);
+                        submitSurvey.addDataToUpload(respondencesAnswer.getAnswerData(idSurvey, quickAction.RESPONDEN_ID));
+                        submitSurvey.execute();
+                        //handler.setUploadedResponden(quickAction.RESPONDEN_ID);
+                        //RefreshList();
+                    }
+                    else{
+                        Toast.makeText(RespondenceActivity.this,"Upload gagal!\n Pastikan Anda terhubung dengan internet",Toast.LENGTH_LONG).show();
+                    }
 
                 } else if (actionId == IDTRASH) {
                     new AlertDialog.Builder(RespondenceActivity.this)

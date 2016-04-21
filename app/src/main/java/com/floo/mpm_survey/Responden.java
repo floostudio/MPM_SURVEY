@@ -7,7 +7,7 @@ public class Responden {
     private String ID_RESPONDENCE;
     private String NAMA_RESPONDENCE;
     private boolean LOCKED;
-    private String CRETAED_AT;
+    private String CREATED_AT;
     private String LAST_MODIFIED;
     private String LATITUDE;
     private String LONGITUDE;
@@ -18,23 +18,23 @@ public class Responden {
 
     }
 
-    public Responden(String ID_RESPONDENCE, String NAMA_RESPONDENCE, boolean LOCKED, String CRETAED_AT,
+    public Responden(String ID_RESPONDENCE, String NAMA_RESPONDENCE, boolean LOCKED, String CREATED_AT,
                      String LAST_MODIFIED, String LATITUDE, String LONGITUDE,boolean FINAL,boolean UPLOADED){
         this.ID_RESPONDENCE = ID_RESPONDENCE;
         this.NAMA_RESPONDENCE = NAMA_RESPONDENCE;
         this.LOCKED = LOCKED;
-        this.CRETAED_AT = CRETAED_AT;
+        this.CREATED_AT = CREATED_AT;
         this.LAST_MODIFIED = LAST_MODIFIED;
         this.LATITUDE = LATITUDE;
         this.LONGITUDE = LONGITUDE;
         this.FINAL = FINAL;
         this.UPLOADED = UPLOADED;
     }
-    public Responden(String NAMA_RESPONDENCE, boolean LOCKED, String CRETAED_AT, String LAST_MODIFIED,
+    public Responden(String NAMA_RESPONDENCE, boolean LOCKED, String CREATED_AT, String LAST_MODIFIED,
                      String LATITUDE, String LONGITUDE,boolean FINAL,boolean UPLOADED){
         this.NAMA_RESPONDENCE = NAMA_RESPONDENCE;
         this.LOCKED = LOCKED;
-        this.CRETAED_AT = CRETAED_AT;
+        this.CREATED_AT = CREATED_AT;
         this.LAST_MODIFIED = LAST_MODIFIED;
         this.LATITUDE = LATITUDE;
         this.LONGITUDE = LONGITUDE;
@@ -83,12 +83,12 @@ public class Responden {
         this.FINAL = FINAL;
     }
 
-    public String getCRETAED_AT(){
-        return CRETAED_AT;
+    public String getCREATED_AT(){
+        return CREATED_AT;
     }
 
-    public void setCRETAED_AT(String CRETAED_AT){
-        this.CRETAED_AT = CRETAED_AT;
+    public void setCREATED_AT(String CREATED_AT){
+        this.CREATED_AT = CREATED_AT;
     }
 
     public String getLAST_MODIFIED(){

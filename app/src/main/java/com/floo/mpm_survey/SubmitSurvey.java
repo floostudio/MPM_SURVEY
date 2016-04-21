@@ -27,7 +27,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -50,6 +53,18 @@ public class SubmitSurvey extends AsyncTask<String, Void, String> {
         activeSurveyorUsername = localLoginData.getPreference(LocalLoginData.keyActiveSurveyorUsername);
         activeSurveyorName = localLoginData.getPreference(LocalLoginData.keyActiveSurveyorNama);
         handler = new DBHandler(context);
+    }
+    public String dateToEpoch(String date_) {
+        String epoch = "null";
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            Date date = df.parse(date_);
+            epoch = date.getTime()+"";
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return epoch;
+
     }
     public void addDataToUpload(JSONObject savedAnswer){
         if(listSavedAnswers.size()==0)
@@ -96,7 +111,6 @@ public class SubmitSurvey extends AsyncTask<String, Void, String> {
                 dataRowToPost.put("id_responden_temp", respondenID);
                 //change nama_responden content to surveyor name
                 //dataRowToPost.put("nama_responden", savedAnswer.getString("RESPONDENCE_NAME"));
-                //// TODO: 30-Mar-16 check which one is correct
                 dataRowToPost.put("nama_responden", activeSurveyorName);
                 Responden responden = handler.getRespondenByID(respondenID);
                 if(responden!=null) {
@@ -107,10 +121,8 @@ public class SubmitSurvey extends AsyncTask<String, Void, String> {
                     dataRowToPost.put("latitude", "");
                     dataRowToPost.put("longitude", "");
                 }
-                //or
-                //dataRowToPost.put("nama_surveyor", activeSurveyorName);
-
-
+                dataRowToPost.put("created_at",dateToEpoch(responden.getCREATED_AT()));
+                dataRowToPost.put("last_modified",dateToEpoch(responden.getLAST_MODIFIED()));
 
 
                 JSONArray answer = savedAnswer.getJSONArray("ANSWER");
