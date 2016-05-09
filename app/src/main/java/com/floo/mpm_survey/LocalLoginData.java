@@ -116,7 +116,8 @@ public class LocalLoginData {
         if (savedLogin != null) {
             try {
                 for (int i = 0; i < savedLogin.length(); i++) {
-                    if (savedLogin.getJSONObject(i).getString("SURVEYOR_USERNAME").equals(username) &&
+
+                    if (savedLogin.getJSONObject(i).getString("SURVEYOR_USERNAME").toLowerCase().equals(username.toLowerCase()) &&
                             savedLogin.getJSONObject(i).getString("SURVEYOR_PASSWORD").equals(password)) {
                         isExist = true;
                         JSONObject object = savedLogin.getJSONObject(i);
