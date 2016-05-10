@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.floo.mpm_survey.Data;
 import com.floo.mpm_survey.Option;
 import com.floo.mpm_survey.Question;
 import com.floo.mpm_survey.Responden;
@@ -35,16 +36,19 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String KEY_RESPONDENCE_IS_FINAL = "is_final";
     private static final String KEY_RESPONDENCE_IS_UPLOADED = "is_uploaded";
     private static final String KEY_RESPONDENCE_IDSURVEY = "id_survey";
+    private static final String SURVEYOR_ID = "surveyor_id";
 
 
     String SYNTAX_RESPONDENCE = "CREATE TABLE "+TABLE_RESPONDENCE+ "("+ KEY_RESPONDENCE_ID +" INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_RESPONDENCE_NAME + " TEXT,"+ KEY_RESPONDENCE_IS_LOCK + " BOOLEAN,"+KEY_CREATE_AT_RESPONDENCE+ " DATETIME,"
             +KEY_LASTMODIFIED_RESPONDENCE+" DATETME NULL,"+KEY_LATITUDE_RESPONDENCE+" TEXT NULL,"+KEY_LONGITUDE_RESPONDENCE+" TEXT NULL, "
-            +KEY_RESPONDENCE_IS_FINAL+" BOOLEAN, "+KEY_RESPONDENCE_IS_UPLOADED+" BOOLEAN, "+ KEY_RESPONDENCE_IDSURVEY +" TEXT)";
+            +KEY_RESPONDENCE_IS_FINAL+" BOOLEAN, "+KEY_RESPONDENCE_IS_UPLOADED+" BOOLEAN, "+ KEY_RESPONDENCE_IDSURVEY +" TEXT,"
+            +SURVEYOR_ID+" TEXT)";
     String DROP_RESPONDENCE = "DROP TABLE IF EXISTS "+TABLE_RESPONDENCE;
 
     //TABLE SURVEY
     private static final String TABLE_SURVEY = "survey_table";
+    private static final String SURVEY_ID = "survey_id";
     private static final String KEY_SURVEYID = "_survey_id";
     private static final String KEY_SURVEYNAMA = "_survey_nama";
     private static final String KEY_TANGGALAKTIF = "_tanggal_aktif";
@@ -53,8 +57,9 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String KEY_JENISRESPONDENCE = "_jenis_respondence";
     private static final String KEY_LASTMODIFIED = "_last_modified";
 
-    String CREATE_TABLE = "CREATE TABLE " + TABLE_SURVEY + " (" + KEY_SURVEYID + " TEXT PRIMARY KEY," + KEY_SURVEYNAMA + " TEXT," +
-            "" + KEY_TANGGALAKTIF + " TEXT," + KEY_DIVISI + " TEXT," + KEY_ISAKTIF + " TEXT," + KEY_JENISRESPONDENCE + " TEXT," + KEY_LASTMODIFIED + " TEXT)";
+    String CREATE_TABLE = "CREATE TABLE " + TABLE_SURVEY + " (" + SURVEY_ID + " INTEGER PRIMARY KEY," + KEY_SURVEYID + " TEXT," + KEY_SURVEYNAMA + " TEXT," +
+            "" + KEY_TANGGALAKTIF + " TEXT," + KEY_DIVISI + " TEXT," + KEY_ISAKTIF + " TEXT," + KEY_JENISRESPONDENCE + " TEXT,"
+            + KEY_LASTMODIFIED + " TEXT," + SURVEYOR_ID + " TEXT)";
     String DROP_TABLE = "DROP TABLE IF EXISTS "+TABLE_SURVEY;
 
     //TABLE PERTANYAAN
@@ -113,40 +118,59 @@ public class DBHandler extends SQLiteOpenHelper {
 
     public void addSurvey(Survey survey) {
         SQLiteDatabase db = this.getWritableDatabase();
-        try {
-            ContentValues values = new ContentValues();
-            values.put(KEY_SURVEYID, survey.getSurvey_id());
-            values.put(KEY_SURVEYNAMA, survey.getSurvey_nama());
-            values.put(KEY_TANGGALAKTIF, survey.getTanggal_aktif());
-            values.put(KEY_DIVISI, survey.getDivisi());
-            values.put(KEY_ISAKTIF, survey.getIs_aktif());
-            values.put(KEY_JENISRESPONDENCE, survey.getJenis_respondence());
-            values.put(KEY_LASTMODIFIED, survey.getLast_modified());
-            db.insert(TABLE_SURVEY, null, values);
-            db.close();
-        } catch (Exception e) {
-            Log.e("problem", e + "");
+
+
+        if(!isSurveyExist(survey.getSurvey_id())) {
+            try {
+                ContentValues values = new ContentValues();
+                values.put(KEY_SURVEYID, survey.getSurvey_id());
+                values.put(KEY_SURVEYNAMA, survey.getSurvey_nama());
+                values.put(KEY_TANGGALAKTIF, survey.getTanggal_aktif());
+                values.put(KEY_DIVISI, survey.getDivisi());
+                values.put(KEY_ISAKTIF, survey.getIs_aktif());
+                values.put(KEY_JENISRESPONDENCE, survey.getJenis_respondence());
+                values.put(KEY_LASTMODIFIED, survey.getLast_modified());
+                values.put(SURVEYOR_ID, Data.SURVEYOR_ID);
+                db.insert(TABLE_SURVEY, null, values);
+                db.close();
+            } catch (Exception e) {
+                Log.e("problem", e + "");
+            }
         }
+
     }
 
+    private boolean isSurveyExist(String id) {
+        Cursor cursor = null;
+        String QUERY = "SELECT * FROM " + TABLE_SURVEY +
+                " WHERE " + KEY_SURVEYID + " = '" + id +"' AND "  +
+                SURVEYOR_ID + " = '" + Data.SURVEYOR_ID + "' COLLATE NOCASE";
+        SQLiteDatabase db = this.getReadableDatabase();
+        cursor = db.rawQuery(QUERY,null);
+
+        if(cursor.getCount()>0) return true;
+        else return false;
+    }
 
     public ArrayList<Survey> getAllSurvey() {
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<Survey> surveyList = null;
         try {
             surveyList = new ArrayList<Survey>();
-            String QUERY = "SELECT * FROM " + TABLE_SURVEY;
+            String QUERY = "SELECT * FROM " + TABLE_SURVEY +
+                    " WHERE " + SURVEYOR_ID + " = '" + Data.SURVEYOR_ID + "' COLLATE NOCASE";
             Cursor cursor = db.rawQuery(QUERY, null);
             if (!cursor.isLast()) {
                 while (cursor.moveToNext()) {
+                    Log.e("cursor", cursor.toString());
                     Survey survey = new Survey();
-                    survey.setSurvey_id(cursor.getString(0));
-                    survey.setSurvey_nama(cursor.getString(1));
-                    survey.setTanggal_aktif(cursor.getString(2));
-                    survey.setDivisi(cursor.getString(3));
-                    survey.setIs_aktif(cursor.getString(4));
-                    survey.setJenis_respondence(cursor.getString(5));
-                    survey.setLast_modified(cursor.getString(6));
+                    survey.setSurvey_id(cursor.getString(1));
+                    survey.setSurvey_nama(cursor.getString(2));
+                    survey.setTanggal_aktif(cursor.getString(3));
+                    survey.setDivisi(cursor.getString(4));
+                    survey.setIs_aktif(cursor.getString(5));
+                    survey.setJenis_respondence(cursor.getString(6));
+                    survey.setLast_modified(cursor.getString(7));
                     surveyList.add(survey);
                 }
             }
@@ -162,7 +186,8 @@ public class DBHandler extends SQLiteOpenHelper {
         ArrayList<String> surveyList = null;
         try {
             surveyList = new ArrayList<>();
-            String QUERY = "SELECT * FROM " + TABLE_SURVEY;
+            String QUERY = "SELECT * FROM " + TABLE_SURVEY +
+                    " WHERE " + SURVEYOR_ID + " = '"+ Data.SURVEYOR_ID+ "'";
             Cursor cursor = db.rawQuery(QUERY, null);
             if (!cursor.isLast()) {
                 while (cursor.moveToNext()) {
@@ -178,7 +203,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     public void deleteSurveyByID(String surveyID){
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("delete from " + TABLE_SURVEY + " where "+ KEY_SURVEYID+"='" + surveyID+ "'");
+        db.execSQL("delete from " + TABLE_SURVEY + " where "+ KEY_SURVEYID+"='" + surveyID+ "' and "+SURVEYOR_ID+ "= '"+Data.SURVEYOR_ID+"' COLLATE NOCASE");
     }
     /*----------T A B L E  P E R T A N Y A A N----------*/
     public void addQuestion(Question question) {
@@ -255,7 +280,8 @@ public class DBHandler extends SQLiteOpenHelper {
             answerList = new ArrayList<>();
             //String QUERY = "SELECT * FROM " + TABLE_RESPONDENCE+ " WHERE "+ KEY_RESPONDENCE_IDSURVEY +" = "+"'"+id_survey+"'";
             String QUERY = "SELECT * FROM " + TABLE_RESPONDENCE+
-                    " WHERE "+ KEY_RESPONDENCE_IDSURVEY +" = "+"'"+id_survey+"' AND "+KEY_RESPONDENCE_IS_UPLOADED+" = 0";
+                    " WHERE "+ KEY_RESPONDENCE_IDSURVEY +" = "+"'"+id_survey+"' AND "+KEY_RESPONDENCE_IS_UPLOADED+" = 0"+
+                    " AND "+SURVEYOR_ID +" = "+"'"+Data.SURVEYOR_ID+"' COLLATE NOCASE";
             Cursor cursor = db.rawQuery(QUERY, null);
             if (!cursor.isLast()) {
                 while (cursor.moveToNext()) {
@@ -285,7 +311,8 @@ public class DBHandler extends SQLiteOpenHelper {
             //answerList = new ArrayList<>();
             //String QUERY = "SELECT * FROM " + TABLE_RESPONDENCE+ " WHERE "+ KEY_RESPONDENCE_IDSURVEY +" = "+"'"+id_survey+"'";
             String QUERY = "SELECT * FROM " + TABLE_RESPONDENCE+
-                    " WHERE "+ KEY_RESPONDENCE_ID+" = "+"'"+respondenID+"'";
+                    " WHERE "+ KEY_RESPONDENCE_ID+" = "+"'"+respondenID+"'" +
+                     " AND "+SURVEYOR_ID +" = "+"'"+Data.SURVEYOR_ID+"' COLLATE NOCASE";
             Cursor cursor = db.rawQuery(QUERY, null);
             if (!cursor.isLast()) {
                 while (cursor.moveToNext()) {
@@ -317,7 +344,8 @@ public class DBHandler extends SQLiteOpenHelper {
             //String QUERY = "SELECT * FROM " + TABLE_RESPONDENCE+ " WHERE "+ KEY_RESPONDENCE_IDSURVEY +" = "+"'"+id_survey+"'";
             String QUERY = "SELECT * FROM " + TABLE_RESPONDENCE+
                     " WHERE "+ KEY_RESPONDENCE_IDSURVEY +" = "+"'"+id_survey+"' AND "+KEY_RESPONDENCE_IS_UPLOADED+" = 0 AND "+
-                    KEY_RESPONDENCE_IS_LOCK+" = 1";
+                    KEY_RESPONDENCE_IS_LOCK+" = 1 " +
+                    " AND "+SURVEYOR_ID +" = "+"'"+Data.SURVEYOR_ID+"' COLLATE NOCASE";
             Cursor cursor = db.rawQuery(QUERY, null);
             if (!cursor.isLast()) {
                 while (cursor.moveToNext()) {
@@ -354,6 +382,7 @@ public class DBHandler extends SQLiteOpenHelper {
             values.put(KEY_LONGITUDE_RESPONDENCE, responden.getLONGITUDE());
             values.put(KEY_RESPONDENCE_IS_FINAL, responden.isFINAL());
             values.put(KEY_RESPONDENCE_IS_UPLOADED, responden.isUPLOADED());
+            values.put(SURVEYOR_ID, Data.SURVEYOR_ID);
 
             repondenceID = db.insert(TABLE_RESPONDENCE, null, values);
             db.close();
@@ -414,7 +443,8 @@ public class DBHandler extends SQLiteOpenHelper {
     public int getUploadedRespondenCount(String idSurvey){
         int count =0;
         String QUERY = "SELECT * FROM " + TABLE_RESPONDENCE+
-                " WHERE "+ KEY_RESPONDENCE_IDSURVEY +" = "+"'"+idSurvey +"' AND "+KEY_RESPONDENCE_IS_UPLOADED+" = 1";
+                " WHERE "+ KEY_RESPONDENCE_IDSURVEY +" = "+"'"+idSurvey +"' AND "+KEY_RESPONDENCE_IS_UPLOADED+" = 1 AND " +
+                SURVEYOR_ID + "= '"+ Data.SURVEYOR_ID +"' COLLATE NOCASE";
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(QUERY, null);
@@ -426,7 +456,8 @@ public class DBHandler extends SQLiteOpenHelper {
     public int getRespondenCount(String idSurvey){
         int count =0;
         String QUERY = "SELECT * FROM " + TABLE_RESPONDENCE+
-                " WHERE "+ KEY_RESPONDENCE_IDSURVEY +" = "+"'"+idSurvey +"'";
+                " WHERE "+ KEY_RESPONDENCE_IDSURVEY +" = "+"'"+idSurvey +"' AND " +
+                SURVEYOR_ID + "= '"+ Data.SURVEYOR_ID +"'  COLLATE NOCASE";
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(QUERY, null);

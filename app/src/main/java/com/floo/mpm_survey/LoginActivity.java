@@ -100,6 +100,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse{
                             if (localLoginData.doLocalLogin(us,pw)) {//succes
                                 progressDialog.dismiss();
                                 Intent menu = new Intent(LoginActivity.this, MainActivity.class);
+                                Data.SURVEYOR_ID = us;
                                 startActivity(menu);
                                 finish();
                             } else {
@@ -160,6 +161,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponse{
             if(object.getString("Status").equals("BERHASIL")){
                 localLoginData.saveLoginData(object.getJSONArray("Data").getJSONObject(0));
                 Intent menu = new Intent(LoginActivity.this, MainActivity.class);
+                Data.SURVEYOR_ID = object.getJSONArray("Data").getJSONObject(0).getString("SURVEYOR_USERNAME");
                 startActivity(menu);
                 finish();
             }

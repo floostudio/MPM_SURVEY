@@ -94,7 +94,6 @@ public class Fragment_Home extends Fragment implements AsyncResponse {
 
     @Override
     public void processFinish(String output) {
-
         if(output!=null){
             setListSurvey();
         }

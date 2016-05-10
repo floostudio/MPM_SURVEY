@@ -18,4 +18,6 @@ public class Data {
     public static String uploadImageUrl = "http://apps.mpm-motor.com/vendorws/MarketingSurvey.svc/UploadImage";
 
     public static String header = "x-header_vendor_key";
+
+    public static String SURVEYOR_ID = "";
 }
