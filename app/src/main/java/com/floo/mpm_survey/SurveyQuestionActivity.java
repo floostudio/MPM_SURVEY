@@ -71,7 +71,7 @@ public class SurveyQuestionActivity extends AppCompatActivity{
     JSONObject savedAnswer;
     static long respondenceID;
     static String idSurvey;
-    String strLatitude, strLongitude, respondenceName;
+    String strLatitude, strLongitude, respondenceName, created_at;
     boolean isEditing = false;
     RespondencesAnswer respondencesAnswer;
     List<String> unAnsweredQuestionID;
@@ -306,7 +306,7 @@ public class SurveyQuestionActivity extends AppCompatActivity{
                 .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Responden respondence = new Responden(respondenceName, false, getDateTime(), getDateTime(), strLatitude, strLongitude, false, false);
+                        Responden respondence = new Responden(respondenceName, false, created_at, getDateTime(), strLatitude, strLongitude, false, false);
                         respondenceID = handler.addResponden(respondence, idSurvey);
                         respondencesAnswer.saveAnswerData(idSurvey, respondenceID + "", respondenceName, answeredQuestion, unAnsweredQuestionID);
                         dialog.dismiss();
@@ -716,6 +716,7 @@ public class SurveyQuestionActivity extends AppCompatActivity{
                 }else{
                     respondenceName = inputUser.getText().toString();
                     txtName.setText("Survey Responden\n"+respondenceName);
+                    created_at = getDateTime();
                     dialog.dismiss();
                     //RefreshQuestion();
                 }

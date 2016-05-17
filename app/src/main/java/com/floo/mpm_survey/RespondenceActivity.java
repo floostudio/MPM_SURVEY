@@ -192,6 +192,7 @@ public class RespondenceActivity extends AppCompatActivity{
                                     RespondencesAnswer respondencesAnswer = new RespondencesAnswer(getApplicationContext());
                                     respondencesAnswer.deleteAnswerData(idSurvey, quickAction.RESPONDEN_ID);
                                     Toast.makeText(getApplicationContext(), "RESPONDEN  " + respondenName + " DELETED", Toast.LENGTH_SHORT).show();
+                                    RefreshList();
                                 }
 
                             })

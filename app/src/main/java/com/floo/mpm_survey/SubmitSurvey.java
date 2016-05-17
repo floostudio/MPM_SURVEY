@@ -171,7 +171,7 @@ public class SubmitSurvey extends AsyncTask<String, Void, String> {
                                 }
                             }
                             ByteArrayOutputStream bao = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 25, bao);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bao);
                             bitmap.recycle();
                             byte[] ba = bao.toByteArray();
                             String base64encode = Base64.encodeToString(ba, Base64.DEFAULT);
