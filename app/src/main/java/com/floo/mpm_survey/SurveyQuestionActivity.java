@@ -328,7 +328,7 @@ public class SurveyQuestionActivity extends AppCompatActivity{
                 .setNeutralButton("Ya & Final", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Responden respondence = new Responden(respondenceName, false, getDateTime(), getDateTime(), strLatitude, strLongitude, true, false);
+                        Responden respondence = new Responden(respondenceName, false, created_at, getDateTime(), strLatitude, strLongitude, true, false);
                         respondenceID = handler.addResponden(respondence, idSurvey);
                         respondencesAnswer.saveAnswerData(idSurvey, respondenceID + "", respondenceName, answeredQuestion, unAnsweredQuestionID);
                         dialog.dismiss();

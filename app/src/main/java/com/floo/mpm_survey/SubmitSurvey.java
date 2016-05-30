@@ -58,8 +58,8 @@ public class SubmitSurvey extends AsyncTask<String, Void, String> {
         String epoch = "null";
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
-            Date date = df.parse(date_);
-            epoch = date.getTime()+"";
+            Date myDate = df.parse(date_);
+            epoch = myDate.getTime()+"";
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -101,7 +101,6 @@ public class SubmitSurvey extends AsyncTask<String, Void, String> {
         String result = "";
         try {
             for(JSONObject savedAnswer:listSavedAnswers) {
-                Log.e("post data",savedAnswer.toString());
                 JSONObject dataRowToPost = new JSONObject();
                 JSONArray jawaban = new JSONArray();
                 String respondenID = savedAnswer.getString("RESPONDENCE_ID");
@@ -162,12 +161,12 @@ public class SubmitSurvey extends AsyncTask<String, Void, String> {
                             for (options.inSampleSize = 1; options.inSampleSize <= 32; options.inSampleSize++) {
                                 try {
                                     bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), options);
-                                    Log.e("image handle", "Decoded successfully for sampleSize " + options.inSampleSize);
+                                    //Log.e("image handle", "Decoded successfully for sampleSize " + options.inSampleSize);
                                     break;
                                 } catch (OutOfMemoryError outOfMemoryError) {
                                     // If an OutOfMemoryError occurred, we continue with for loop and next inSampleSize value
-                                    Log.e("image handle", "outOfMemoryError while reading file for sampleSize " + options.inSampleSize
-                                            + " retrying with higher value");
+                                    //Log.e("image handle", "outOfMemoryError while reading file for sampleSize " + options.inSampleSize
+                                    //        + " retrying with higher value");
                                 }
                             }
                             ByteArrayOutputStream bao = new ByteArrayOutputStream();
@@ -197,7 +196,7 @@ public class SubmitSurvey extends AsyncTask<String, Void, String> {
                 dataRowToPost.put("jawaban", jawaban);
                 dataToPost.put(dataRowToPost);
             }
-
+            //Log.e("dataPost", dataToPost.toString());
             String headerKey = DataFetcherTask.getHeaderKey();
             result = postJSON(headerKey,dataToPost);
         } catch (JSONException e) {
@@ -212,7 +211,7 @@ public class SubmitSurvey extends AsyncTask<String, Void, String> {
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
         progressDialog.dismiss();
-        Log.e("push result", result);
+        //Log.e("push result", result);
         try {
             JSONObject resultData = new JSONObject(result);
             if(resultData.getString("Status").equalsIgnoreCase("berhasil")){//ketika seluruh data submit berhasil maka di dalam objek keterangan kososng
@@ -245,7 +244,7 @@ public class SubmitSurvey extends AsyncTask<String, Void, String> {
         try {
             JSONObject object = new JSONObject();
             object.put("respond_answer",dataToServer);
-            Log.e("post data",object.toString());
+//            Log.e("post data",object.toString());
 
             se = new StringEntity(object.toString());
             httppost.setEntity(se);
@@ -261,7 +260,7 @@ public class SubmitSurvey extends AsyncTask<String, Void, String> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Log.e("pushdata", result);
+        //Log.e("pushdata", result);
         return result;
     }
 
@@ -291,8 +290,8 @@ public class SubmitSurvey extends AsyncTask<String, Void, String> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Log.e("image result", result);
-        Log.e("image name", fileName);
+        //Log.e("image result", result);
+        //Log.e("image name", fileName);
 
         return fileName;
     }

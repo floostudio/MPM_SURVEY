@@ -15,6 +15,7 @@ public class Data {
     public static String loginUrl = "http://apps.mpm-motor.com/vendorws/MarketingSurvey.svc/GetLoginSurveyors/";
 
     public static String postUrl = "http://apps.mpm-motor.com/vendorws/MarketingSurvey.svc/AddRespondenAnswer";
+    //public static String postUrl = "http://sandbox.floostudio.com/lenteramandiri/api/v1/SurveyDebug";
     public static String uploadImageUrl = "http://apps.mpm-motor.com/vendorws/MarketingSurvey.svc/UploadImage";
 
     public static String header = "x-header_vendor_key";
